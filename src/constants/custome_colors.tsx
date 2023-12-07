@@ -8,6 +8,7 @@ const white_color = '#FFFFFF';
 const black_color = '#000000';
 const gray_color = '#808080';
 const green_color = '#3e8b2b';
+const blue_color = '#3A9BDC';
 const textfield_placeholder_color = '#808080';
 
 export { 
@@ -19,5 +20,6 @@ export {
   black_color,
   gray_color,
   green_color,
+  blue_color,
   textfield_placeholder_color,
 }
