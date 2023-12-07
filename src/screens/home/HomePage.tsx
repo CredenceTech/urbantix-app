@@ -9,14 +9,14 @@ import HomeScreen from './HomeScreen';
 const Tab = createBottomTabNavigator();
 
 const HomePage = () => {
-  const insets = useSafeAreaInsets();
+  const safeAreaInsets = useSafeAreaInsets();
   return (
     <Tab.Navigator
       screenOptions={{
         tabBarStyle: {
-          height: Platform.OS === "android" ? 60 : 95,
+          height: Platform.OS === "android" ? 60 : (60 + safeAreaInsets.bottom),
           backgroundColor: "#3E8B2B",
-          paddingBottom: insets.bottom,
+          paddingBottom: safeAreaInsets.bottom,
           paddingTop: 5,
         },
         tabBarLabelStyle: {

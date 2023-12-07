@@ -108,7 +108,7 @@ const LoginScreen: React.FC<Prop> = ({ }) => {
                     // There was an error on the native side
                 }
 
-                navigation.navigate('HomeScreen');
+                navigation.navigate('Home');
             }
         }
         setLoading(false);
