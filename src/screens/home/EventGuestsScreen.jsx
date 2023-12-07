@@ -120,7 +120,7 @@ const EventGuestsScreen: React.FC<Prop> = ({ }) => {
     const userLogout = () => {
         console.log('OK Pressed');
         removeUserSession();
-        navigation.navigate('LoginScreen');
+        navigation.navigate('LoginLanding');
 
     }
 

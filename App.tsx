@@ -15,6 +15,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 //SCREENS START
 import SplashScreen from './src/screens/common/SplashScreen';
 import LoginScreen from './src/screens/login_registration/LoginScreen';
+import LoginLanding from './src/screens/login_registration/LoginLanding';
 import HomeScreen from './src/screens/home/HomeScreen';
 import EventGuestsScreen from './src/screens/home/EventGuestsScreen';
 //SCREENS END
@@ -50,17 +51,18 @@ function App() {
 
   return (
     <Provider store={store}>
-    <SafeAreaProvider>
-    <NavigationContainer theme={MyTheme}  >
-          <Stack.Navigator  screenOptions={headerStyle} >
-          <Stack.Screen name="SplashScreen" component={SplashScreen} />
-          <Stack.Screen name="LoginScreen" component={LoginScreen} />
-          <Stack.Screen name="HomeScreen" component={HomeScreen} />
-          <Stack.Screen name="EventGuestsScreen" component={EventGuestsScreen} />
-          <Stack.Screen name="Home" component={HomePage} />
-        </Stack.Navigator>
-    </NavigationContainer>
-    </SafeAreaProvider>
+      <SafeAreaProvider>
+        <NavigationContainer theme={MyTheme}  >
+          <Stack.Navigator screenOptions={headerStyle} >
+            <Stack.Screen name="SplashScreen" component={SplashScreen} />
+            <Stack.Screen name="LoginScreen" component={LoginScreen} />
+            <Stack.Screen name="HomeScreen" component={HomeScreen} />
+            <Stack.Screen name="LoginLanding" component={LoginLanding} />
+            <Stack.Screen name="EventGuestsScreen" component={EventGuestsScreen} />
+            <Stack.Screen name="Home" component={HomePage} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </SafeAreaProvider>
     </Provider>
   );
 }
@@ -89,15 +91,15 @@ const headerStyle = {
 };
 
 export const MyTheme = {
-    dark: false,
-    colors: {
-      primary:  primary_color,
-      background: 'white',
-      card: 'rgb(255, 255, 255)',
-      text: 'rgb(28, 28, 30)',
-      border: 'rgb(199, 199, 204)',
-      notification: 'rgb(255, 69, 58)',
-    },
-  };
+  dark: false,
+  colors: {
+    primary: primary_color,
+    background: 'white',
+    card: 'rgb(255, 255, 255)',
+    text: 'rgb(28, 28, 30)',
+    border: 'rgb(199, 199, 204)',
+    notification: 'rgb(255, 69, 58)',
+  },
+};
 
 export default App;

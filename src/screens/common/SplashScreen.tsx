@@ -38,7 +38,7 @@ const SplashScreen: React.FC<Prop> = ({ }) => {
     }, [])
 
     async function retrieveUserSession() {
-        try {   
+        try {
             const session = await EncryptedStorage.getItem("user_session");
             if (session !== undefined) {
                 let userObj = JSON.parse(session);
@@ -47,15 +47,15 @@ const SplashScreen: React.FC<Prop> = ({ }) => {
                     navigation.navigate('Home');
                 }
                 else {
-                    navigation.navigate('LoginScreen');
+                    navigation.navigate('LoginLanding');
                 }
             }
             else {
-                navigation.navigate('LoginScreen');
+                navigation.navigate('LoginLanding');
             }
         } catch (error) {
             // There was an error on the native side
-            navigation.navigate('LoginScreen');
+            navigation.navigate('LoginLanding');
         }
     }
 
