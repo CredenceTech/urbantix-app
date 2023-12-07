@@ -75,7 +75,7 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
 
         setUserName(userName);
     }
-    
+
 
     useEffect(() => {
         getEvents();
@@ -108,6 +108,14 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
     const pastClicked = () => {
         if (status != 'Past') {
             setStatus('Past');
+            setSearch('');
+            setCurrentpage(1);
+        }
+    }
+
+    const draftClicked = () => {
+        if (status != 'Draft') {
+            setStatus('Draft');
             setSearch('');
             setCurrentpage(1);
         }
@@ -254,6 +262,13 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
                                     <Text style={{ color: white_color, textAlign: "center", fontSize: 14, fontWeight: "bold" }}>Past Events</Text>
                                 </View>
                                 <View style={{ height: 3, backgroundColor: status == 'Past' ? white_color : primary_color }} ></View>
+                            </TouchableOpacity>
+                            <View style={{ width: 3 }}></View>
+                            <TouchableOpacity style={{ flex: 1, backgroundColor: primary_color }} onPress={draftClicked}>
+                                <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+                                    <Text style={{ color: white_color, textAlign: "center", fontSize: 14, fontWeight: "bold" }}>Draft Events</Text>
+                                </View>
+                                <View style={{ height: 3, backgroundColor: status == 'Draft' ? white_color : primary_color }} ></View>
                             </TouchableOpacity>
                         </View>
                         {
