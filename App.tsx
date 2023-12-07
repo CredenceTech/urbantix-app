@@ -7,12 +7,10 @@
 
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { ScaledSheet } from "react-native-size-matters";
 import { NavigationContainer } from "@react-navigation/native";
 import { Provider } from "react-redux";
 import { store } from "./src/state/store";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import type {PropsWithChildren} from 'react';
 
 //SCREENS START
 import SplashScreen from './src/screens/common/SplashScreen';
@@ -39,6 +37,7 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import { primary_color } from './src/constants/custome_colors';
+import HomePage from './src/screens/home/HomePage';
 
 const Stack = createNativeStackNavigator();
 
@@ -58,6 +57,7 @@ function App() {
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
           <Stack.Screen name="HomeScreen" component={HomeScreen} />
           <Stack.Screen name="EventGuestsScreen" component={EventGuestsScreen} />
+          <Stack.Screen name="Home" component={HomePage} />
         </Stack.Navigator>
     </NavigationContainer>
     </SafeAreaProvider>

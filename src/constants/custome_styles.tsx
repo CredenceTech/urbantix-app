@@ -15,7 +15,8 @@ const custome_screenContainer = StyleSheet.create({
     view_container: {
         flex: 1, 
         flexDirection: "column", 
-        backgroundColor: background_color
+        backgroundColor: background_color,
+        height: 200
     },
     setPrimaryTextField: {
         flex: 1,

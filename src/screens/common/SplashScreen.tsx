@@ -44,7 +44,7 @@ const SplashScreen: React.FC<Prop> = ({ }) => {
                 let userObj = JSON.parse(session);
                 // Congrats! You've just retrieved your first value!
                 if (userObj.user != null && userObj.user.access_token != null) {
-                    navigation.navigate('HomeScreen');
+                    navigation.navigate('Home');
                 }
                 else {
                     navigation.navigate('LoginScreen');
