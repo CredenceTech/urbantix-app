@@ -92,7 +92,7 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
         }
     }
 
-    const searchValueChanged = async (text: string = 'ssss') => {
+    const searchValueChanged = async (text: string = '') => {
         setSearch(text);
         setCurrentpage(1);
     }
