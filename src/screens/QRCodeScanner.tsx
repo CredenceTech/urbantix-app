@@ -19,6 +19,7 @@ const QRScanner = () => {
         setScanneddata(null);
         setResetSuccess(false);
         setAlreadyScanned(false);
+        setFailedData(null)
       }, 2000);
     }
     return () => clearTimeout(timer);
@@ -62,6 +63,7 @@ const QRScanner = () => {
         onPress={() => {
           setVerifiedSuccessfully(false);
           setSuccessMessage(null);
+          setScanneddata(null)
         }}>
         <Text style={{fontSize: 18, color: '#FFF'}}>Scan Again</Text>
       </TouchableOpacity>
