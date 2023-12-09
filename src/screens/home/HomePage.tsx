@@ -4,6 +4,7 @@ import { Image, Platform, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Path, Svg } from 'react-native-svg';
 import HomeScreen from './HomeScreen';
+import Orders from './Orders';
 // import ProductIcon from "../assets/img/ProductIconSvg.svg"
 
 const Tab = createBottomTabNavigator();
@@ -50,7 +51,7 @@ const HomePage = () => {
       />
       <Tab.Screen
         name="Orders"
-        component={HomeScreen}
+        component={Orders}
         options={{
           tabBarIcon: ({ focused }) => (
             <View
@@ -83,7 +84,7 @@ const HomePage = () => {
       />
       <Tab.Screen
         name="Check In"
-        component={() => {}}
+        component={() => { }}
         options={{
           tabBarIcon: ({ focused }) => (
             <View
@@ -152,7 +153,7 @@ const HomePage = () => {
       />
       <Tab.Screen
         name="User Profile"
-        component={() => {}}
+        component={() => { }}
         options={{
           tabBarIcon: ({ focused }) => (
             <View
