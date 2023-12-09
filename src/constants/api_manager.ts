@@ -76,44 +76,9 @@ const postParamRequest = async (url, params) => {
   return null;
 };
 
-// const postParamRequest = async (url, header, params) => {
-//     try {
-//         console.log('====================================');
-//         console.log('REQUEST');
-//         console.log(url);
-//         console.log(header);
-//         console.log(params);
-//         console.log('====================================');
-//         const response = await fetch(url, {
-//             method: 'POST',
-//             headers: header,
-//             body: params,
-//         });
-//         // const response = await fetch(baseURL + login, {
-//         //     method: 'POST',
-//         //     headers: {
-//         //         Accept: 'application/json',
-//         //         'Content-Type': 'application/json',
-//         //     },
-//         //     body: JSON.stringify({
-//         //         'email': params.email,
-//         //         'password': params.password,
-//         //     }),
-//         // });
-//         const json = await response.json();
-//         console.log('RESPONCE');
-//         console.log(json);
-//         let code = json.statusCode;
-//         let message = json.message;
-//         let data = json.data;
-//         return [code, message, data, null]
-//     } catch (error) {
-//         console.error(error);
-//         return [101, null, null, error]
-//     }
-// };
 
 export {
   postParamRequest,
   getParamRequest,
+  api,
 }

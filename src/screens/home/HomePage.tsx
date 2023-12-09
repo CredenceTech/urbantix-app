@@ -4,6 +4,7 @@ import { Image, Platform, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Path, Svg } from 'react-native-svg';
 import HomeScreen from './HomeScreen';
+import QRScanner from '../QRCodeScanner';
 // import ProductIcon from "../assets/img/ProductIconSvg.svg"
 
 const Tab = createBottomTabNavigator();
@@ -83,7 +84,7 @@ const HomePage = () => {
       />
       <Tab.Screen
         name="Check In"
-        component={() => {}}
+        component={QRScanner}
         options={{
           tabBarIcon: ({ focused }) => (
             <View
