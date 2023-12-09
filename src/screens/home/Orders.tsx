@@ -17,20 +17,20 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { useNavigation } from '@react-navigation/native';
 import { background_color, black_color, blue_color, gray_color, primary_color, white_color } from "../../constants/custome_colors";
-import { custome_screenContainer, custome_buttons, custome_textfields } from "../../constants/custome_styles";
-
+import { custome_screenContainer } from "../../constants/custome_styles";
+import moment from 'moment';
 import NavigationBar from "../../components/NavigationBar";
 import EventComponent from "../../components/EventComponent";
 import Loader from "../../components/Loader";
-import { events_list } from "../../constants/api_constants";
-import { postParamRequest } from "../../constants/api_manager";
+import { ordersUrl } from "../../constants/api_constants";
+import { getParamRequest, } from "../../constants/api_manager";
 
 
 interface Prop {
     navigation: any;
 }
 
-const HomeScreen: React.FC<Prop> = ({ }) => {
+const Orders = () => {
 
     const safeAreaInsets = useSafeAreaInsets();
     const navigation = useNavigation();
@@ -78,82 +78,22 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
 
 
     useEffect(() => {
-        getEvents();
-    }, [status, currentpage])
-
-    useEffect(() => {
-        getEvents(false);
-    }, [search])
-
-    const nextPage = async () => {
-        if (totalEvents > arrayEvent.length) {
-            setCurrentpage(currentpage + 1)
-            getEvents();
-        }
-    }
+        getOrdersList();
+    }, [])
 
     const searchValueChanged = async (text: string = '') => {
         setSearch(text);
         setCurrentpage(1);
     }
 
-    const upcomingClicked = () => {
-        if (status != 'Upcoming') {
-            setStatus('Upcoming');
-            setSearch('');
-            setCurrentpage(1);
-        }
-    }
 
-    const pastClicked = () => {
-        if (status != 'Past') {
-            setStatus('Past');
-            setSearch('');
-            setCurrentpage(1);
-        }
-    }
-
-    const draftClicked = () => {
-        if (status != 'Draft') {
-            setStatus('Draft');
-            setSearch('');
-            setCurrentpage(1);
-        }
-    }
-
-    const getEvents = async (showLoader: Boolean = true) => {
+    const getOrdersList = async (showLoader: Boolean = true) => {
         if (showLoader == true) {
             setLoading(true);
         }
-
-        var userID = '';
-
-        try {
-            const session = await EncryptedStorage.getItem("user_session");
-            if (session !== undefined) {
-                let userObj = JSON.parse(session);
-                if (userObj.user != null && userObj.user.id != null) {
-                    userID = userObj.user.id;
-                }
-            }
-        } catch (error) {
-            // There was an error on the native side
-        }
-
-        //LOGIN API CALL
-        var params = JSON.stringify({
-            'keyword': search,
-            'pageNumber': currentpage,
-            'pageSize': 4,
-            'isLogin': true,
-            'isLike': false,
-            'userId': userID,
-            'status': status
-        })
-        console.log('====================================');
-        console.log(params);
-        console.log('====================================');
-        const [success, message, data, error] = await postParamRequest(events_list, params);
+        let apiUrl = ordersUrl;
+        const [success, message, data, error]: any = await getParamRequest(apiUrl);
+        console.log("first, DATA", data)
         if (error != null) {
             Alert.alert("Error", error);
             setArrayEvent([]);
@@ -163,28 +103,14 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
             Alert.alert("Failed", message);
         }
         else {
-            if (data && data !== undefined && data !== null && data.events !== undefined && data.events !== null) {
-                setTotalEvents(data.count);
-                if (currentpage == 1) {
-                    setArrayEvent(data.events);
-                }
-                else {
-                    setArrayEvent(...arrayEvent, data.events);
-                }
-
-                console.log('====================================');
-                console.log(arrayEvent.length);
-                console.log('====================================');
+            if (data) {
+                setArrayEvent(data)
             }
             else {
                 setArrayEvent([]);
             }
         }
         setLoading(false);
-    }
-
-    const backClicked = async () => {
-        navigation.goBack();
     }
 
     const logOutClicked = async () => {
@@ -202,6 +128,9 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
         ]);
     }
 
+
+    // console.log("firstsdasdasdasdasdasdasdasdas  total", totalEvents)
+
     const userLogout = () => {
         console.log('OK Pressed');
         removeUserSession();
@@ -217,12 +146,6 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
             // There was an error on the native side
         }
     }
-
-    const actionOnRow = (item: any) => {
-        navigation.navigate('EventGuestsScreen', { objEvent: item });
-
-    }
-
     return (
         <View style={custome_screenContainer.view_container}>
             <Loader isLoading={isLoading} />
@@ -249,44 +172,43 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
                                 }
                                 value={search} />
                         </View>
-                        <View style={{ flexDirection: "row", height: 50 }}>
-                            <TouchableOpacity style={{ flex: 1, backgroundColor: primary_color }} onPress={upcomingClicked}>
-                                <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-                                    <Text style={{ color: white_color, textAlign: "center", fontSize: 14, fontWeight: "bold" }}>Live Events</Text>
-                                </View>
-                                <View style={{ height: 3, backgroundColor: status == 'Upcoming' ? white_color : primary_color }} ></View>
-                            </TouchableOpacity>
-                            <View style={{ width: 3 }}></View>
-                            <TouchableOpacity style={{ flex: 1, backgroundColor: primary_color }} onPress={pastClicked}>
-                                <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-                                    <Text style={{ color: white_color, textAlign: "center", fontSize: 14, fontWeight: "bold" }}>Past Events</Text>
-                                </View>
-                                <View style={{ height: 3, backgroundColor: status == 'Past' ? white_color : primary_color }} ></View>
-                            </TouchableOpacity>
-                            <View style={{ width: 3 }}></View>
-                            <TouchableOpacity style={{ flex: 1, backgroundColor: primary_color }} onPress={draftClicked}>
-                                <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-                                    <Text style={{ color: white_color, textAlign: "center", fontSize: 14, fontWeight: "bold" }}>Draft Events</Text>
-                                </View>
-                                <View style={{ height: 3, backgroundColor: status == 'Draft' ? white_color : primary_color }} ></View>
-                            </TouchableOpacity>
-                        </View>
+
                         {
                             arrayEvent.length > 0 ?
                                 <FlatList
                                     data={arrayEvent}
-                                    renderItem={({ item }) => <EventComponent objEvent={item} actionOnRow={() => actionOnRow(item)} />}
-                                    keyExtractor={(item, index) => item.id}
-                                    onEndReached={({ distanceFromEnd }) => {
-                                        if (distanceFromEnd < 0) return;
-                                        nextPage()
-                                    }} /> :
+                                    renderItem={({ item }: any) => {
+                                        return (
+                                            <View style={styles.main_view}>
+                                                <Text style={styles.event_title}>{item?.event?.name}</Text>
+                                                <Text style={styles.event_address}>{item?.event?.place}</Text>
+                                                <Text style={styles.event_datetime}>{moment(moment(item?.event?.start_date, 'YYYY-MM-DD HH:mm:ss.ZZZ')).format('ddd, MMM D, h:mm A')}</Text>
+                                                <View style={{ flexDirection: "row", marginTop: 10, marginBottom: 5 }}>
+                                                    <Text style={styles.event_datetime}>Ticket Price</Text>
+                                                    <View style={{ flex: 1 }} />
+                                                    <Text style={styles.event_datetime}>$ {item?.event?.tickets[0]?.price}</Text>
+                                                </View>
+                                                <View style={[{ flexDirection: "row", borderBottomWidth: 1, borderBottomColor: '#fff' }]}>
+                                                    <Text style={styles.event_datetime}>Order fees</Text>
+                                                    <View style={{ flex: 1 }} />
+                                                    <Text style={[styles.event_datetime, { paddingBottom: 4 }]}>$ {item?.event?.tickets[0]?.order_fees}</Text>
+                                                </View>
+                                                <View style={{ flexDirection: "row", marginTop: 10, marginBottom: 5 }}>
+                                                    <Text style={styles.event_datetime}>Total Amount</Text>
+                                                    <View style={{ flex: 1 }} />
+                                                    <Text style={styles.event_datetime}>$ {item?.event?.tickets[0]?.total_amount}</Text>
+                                                </View>
+                                            </View>
+                                        )
+                                    }}
+                                    keyExtractor={(item, index) => index}
+                                /> :
                                 <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-                                    <Text style={styles.notDataLable}>No Events Found!</Text>
+                                    <Text style={styles.notDataLable}>No Orders Found!</Text>
                                 </View>
                         }
                         <View style={{ flexDirection: "row", height: 50 }}>
-                            <TouchableOpacity style={{ flex: 1, paddingHorizontal: 20 }} onPress={pastClicked}>
+                            <TouchableOpacity style={{ flex: 1, paddingHorizontal: 20 }} >
                                 <View style={{ flex: 1, justifyContent: "center" }}>
                                     <Text style={{ color: white_color, textAlign: "left", fontSize: 14, fontWeight: "bold" }}>{userName}</Text>
                                 </View>
@@ -298,11 +220,13 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
                             </TouchableOpacity>
                         </View>
                     </View>
-                </KeyboardAvoidingView>
-            </SafeAreaView>
-        </View>
-    );
-};
+                </KeyboardAvoidingView >
+            </SafeAreaView >
+        </View >
+    )
+}
+
+export default Orders;
 
 const styles = StyleSheet.create({
     SafeAreaView: {
@@ -328,6 +252,28 @@ const styles = StyleSheet.create({
         marginRight: 10,
         tintColor: primary_color
     },
+    main_view: {
+        paddingHorizontal: 15,
+        paddingTop: 20,
+        paddingBottom: 10,
+        flexDirection: "column",
+        backgroundColor: black_color,
+    },
+    event_title: {
+        paddingVertical: 2,
+        fontSize: 24,
+        fontWeight: "bold",
+        color: white_color,
+    },
+    event_address: {
+        paddingVertical: 2,
+        fontSize: 14,
+        fontWeight: "normal",
+        color: white_color,
+    },
+    event_datetime: {
+        fontSize: 14,
+        fontWeight: "normal",
+        color: white_color,
+    },
 });
-
-export default HomeScreen;

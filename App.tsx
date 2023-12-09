@@ -39,6 +39,7 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 import { primary_color } from './src/constants/custome_colors';
 import HomePage from './src/screens/home/HomePage';
+import Orders from './src/screens/home/Orders';
 import QRScanner from './src/screens/QRCodeScanner';
 
 const Stack = createNativeStackNavigator();
@@ -61,7 +62,8 @@ function App() {
             <Stack.Screen name="LoginLanding" component={LoginLanding} />
             <Stack.Screen name="EventGuestsScreen" component={EventGuestsScreen} />
             <Stack.Screen name="Home" component={HomePage} />
-            <Stack.Screen name="QRScanner" component={QRScanner} />
+            <Stack.Screen name="Orders" component={Orders} />
+            <Stack.Screen name="CheckIn" component={QRScanner} />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>

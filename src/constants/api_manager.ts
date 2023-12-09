@@ -36,7 +36,7 @@ api.interceptors.request.use(
   }
 );
 
-const getParamRequest = async (url) => {
+const getParamRequest = async (url: string) => {
   try {
     const result = await api.get(url).then((response) => {
       return response.data;

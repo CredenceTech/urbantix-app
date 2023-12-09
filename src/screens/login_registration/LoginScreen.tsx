@@ -36,14 +36,14 @@ interface InputValue {
 const LoginScreen: React.FC<Prop> = ({ }) => {
 
     const [isShowPassword, setShowPassword] = useState(false);
-    const [inputValue, setInputValue] = useState<InputValue>({
-        email: "mayank.credencetech@gmail.com",
-        password: "!znJw0}]",
-    });
     // const [inputValue, setInputValue] = useState<InputValue>({
-    //     email: "",
-    //     password: "",
+    //     email: "mayank.credencetech@gmail.com",
+    //     password: "!znJw0}]",
     // });
+    const [inputValue, setInputValue] = useState<InputValue>({
+        email: "",
+        password: "",
+    });
     const [dataFromChild, setDataFromChild] = useState("");
 
     const [isLoading, setLoading] = useState(true);
@@ -117,13 +117,13 @@ const LoginScreen: React.FC<Prop> = ({ }) => {
     const ShowPasswordImage = () => {
         if (isShowPassword) {
             return <Image
-                source={require("../../assets/images/password_show.png")}
+                source={require("../../assets/images/password_hide.png")}
                 style={styles.show_password}
             />
         }
         else {
             return <Image
-                source={require("../../assets/images/password_hide.png")}
+                source={require("../../assets/images/password_show.png")}
                 style={styles.show_password}
             />
         }
