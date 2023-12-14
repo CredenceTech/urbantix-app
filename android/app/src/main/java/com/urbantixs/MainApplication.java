@@ -1,4 +1,4 @@
-package com.urbantixs;
+package com.credencetech.urbantixs;
 
 import android.app.Application;
 import com.facebook.react.PackageList;

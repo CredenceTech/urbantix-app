@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "949818663835",
+    "project_id": "urbantix-390806",
+    "storage_bucket": "urbantix-390806.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:949818663835:android:4074596902096273e0b73e",
+        "android_client_info": {
+          "package_name": "com.credencetech.urbantixs"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "949818663835-mbv4q5hoa8jh149hs9bj6ke2ppfqb32k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANBbpaERqlg2ROOStHF8d_StqvGcPVkn0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "949818663835-mbv4q5hoa8jh149hs9bj6ke2ppfqb32k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

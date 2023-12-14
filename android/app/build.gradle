@@ -73,9 +73,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.urbantixs"
+    namespace "com.credencetech.urbantixs"
     defaultConfig {
-        applicationId "com.urbantixs"
+        applicationId "com.credencetech.urbantixs"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

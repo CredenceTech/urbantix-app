@@ -24,6 +24,7 @@ import EventComponent from "../../components/EventComponent";
 import Loader from "../../components/Loader";
 import { events_list } from "../../constants/api_constants";
 import { postParamRequest } from "../../constants/api_manager";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 
 interface Prop {
@@ -202,8 +203,9 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
         ]);
     }
 
-    const userLogout = () => {
+    const userLogout = async () => {
         console.log('OK Pressed');
+        await GoogleSignin.signOut();
         removeUserSession();
         navigation.navigate('LoginLanding');
 
