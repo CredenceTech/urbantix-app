@@ -19,7 +19,7 @@ const QRScanner = () => {
         setScanneddata(null);
         setResetSuccess(false);
         setAlreadyScanned(false);
-        setFailedData(null)
+        setFailedData(null);
       }, 2000);
     }
     return () => clearTimeout(timer);
@@ -63,7 +63,7 @@ const QRScanner = () => {
         onPress={() => {
           setVerifiedSuccessfully(false);
           setSuccessMessage(null);
-          setScanneddata(null)
+          setScanneddata(null);
         }}>
         <Text style={{fontSize: 18, color: '#FFF'}}>Scan Again</Text>
       </TouchableOpacity>
@@ -103,6 +103,10 @@ const QRScanner = () => {
         borderColor: '#3E8B2B',
         borderRadius: 7,
       }}
+      topViewStyle={{
+        backgroundColor: '#3E8B2B',
+        color: '#FFF',
+      }}
     />
   );
 };
@@ -115,7 +119,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '500',
     padding: 32,
-    color: '#3E8B2B',
+    color: '#FFF',
   },
   buttonText: {
     fontSize: 16,
