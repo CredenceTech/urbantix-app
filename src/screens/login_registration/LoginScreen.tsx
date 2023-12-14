@@ -17,7 +17,7 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from '@react-navigation/native';
 import Loader from './../../components/Loader'
-import { black_color, login_background_color, primary_color } from "../../constants/custome_colors";
+import { black_color, gray_color, login_background_color, primary_color } from "../../constants/custome_colors";
 import { custome_buttons, custome_textfields } from "../../constants/custome_styles";
 
 import { login } from "../../constants/api_constants";
@@ -61,6 +61,10 @@ const LoginScreen: React.FC<Prop> = ({ }) => {
 
     const showPasswordClicked = async () => {
         setShowPassword(!isShowPassword)
+    }
+
+    const cancelClicked = async () => {
+        navigation.goBack()
     }
 
     const logInClicked = async () => {
@@ -171,6 +175,9 @@ const LoginScreen: React.FC<Prop> = ({ }) => {
                 <View style={{ alignItems: 'center' }}>
                     <TouchableOpacity style={custome_buttons.primary_button_view} onPress={logInClicked}>
                         <Text style={custome_buttons.primary_button_title}>Sign In</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[custome_buttons.primary_button_view, {backgroundColor:login_background_color, borderColor: login_background_color}]} onPress={cancelClicked}>
+                        <Text style={{color: gray_color, fontSize: 14, fontWeight: '500', textAlign: "center",textDecorationLine: 'underline'}}>Cancel</Text>
                     </TouchableOpacity>
                 </View>
             </View>
