@@ -11,11 +11,11 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		2A7D8CC54DDB23D5CCB5B980 /* libPods-UrbanTixs-UrbanTixsTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B4387F135B806306C255DA49 /* libPods-UrbanTixs-UrbanTixsTests.a */; };
-		45850E28211084BE55947C47 /* libPods-UrbanTixs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2AD43B0D470C4E6BF01A8EC7 /* libPods-UrbanTixs.a */; };
+		178EEA072B7DC947E859CFD6 /* libPods-UrbanTixs-UrbanTixsTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF465900102FB883A099B4A4 /* libPods-UrbanTixs-UrbanTixsTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		DE651CAD2B29737400CF8A3C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DE651CAC2B29737300CF8A3C /* GoogleService-Info.plist */; };
-		DE651CAE2B29737400CF8A3C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DE651CAC2B29737300CF8A3C /* GoogleService-Info.plist */; };
+		94046F0A2AEB4A32264666F2 /* libPods-UrbanTixs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5AD47562A1DFDD6E92133E77 /* libPods-UrbanTixs.a */; };
+		DE3BD7ED2B306F9A006F01BF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DE3BD7EC2B306F99006F01BF /* GoogleService-Info.plist */; };
+		DE3BD7EE2B306F9A006F01BF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DE3BD7EC2B306F99006F01BF /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,14 +38,14 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = UrbanTixs/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = UrbanTixs/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = UrbanTixs/main.m; sourceTree = "<group>"; };
-		2AD43B0D470C4E6BF01A8EC7 /* libPods-UrbanTixs.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-UrbanTixs.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		638DF23EF2CDE922D650A8EB /* Pods-UrbanTixs-UrbanTixsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UrbanTixs-UrbanTixsTests.debug.xcconfig"; path = "Target Support Files/Pods-UrbanTixs-UrbanTixsTests/Pods-UrbanTixs-UrbanTixsTests.debug.xcconfig"; sourceTree = "<group>"; };
-		773250C184847170463227B2 /* Pods-UrbanTixs.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UrbanTixs.debug.xcconfig"; path = "Target Support Files/Pods-UrbanTixs/Pods-UrbanTixs.debug.xcconfig"; sourceTree = "<group>"; };
+		13DDA56B185508CDFE5CC417 /* Pods-UrbanTixs.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UrbanTixs.debug.xcconfig"; path = "Target Support Files/Pods-UrbanTixs/Pods-UrbanTixs.debug.xcconfig"; sourceTree = "<group>"; };
+		18F635D6475412D451B99220 /* Pods-UrbanTixs-UrbanTixsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UrbanTixs-UrbanTixsTests.debug.xcconfig"; path = "Target Support Files/Pods-UrbanTixs-UrbanTixsTests/Pods-UrbanTixs-UrbanTixsTests.debug.xcconfig"; sourceTree = "<group>"; };
+		48059C50F4137A7E8BDE9127 /* Pods-UrbanTixs.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UrbanTixs.release.xcconfig"; path = "Target Support Files/Pods-UrbanTixs/Pods-UrbanTixs.release.xcconfig"; sourceTree = "<group>"; };
+		5AD47562A1DFDD6E92133E77 /* libPods-UrbanTixs.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-UrbanTixs.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = UrbanTixs/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		8CA557065BC8141871409DB9 /* Pods-UrbanTixs.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UrbanTixs.release.xcconfig"; path = "Target Support Files/Pods-UrbanTixs/Pods-UrbanTixs.release.xcconfig"; sourceTree = "<group>"; };
-		B4387F135B806306C255DA49 /* libPods-UrbanTixs-UrbanTixsTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-UrbanTixs-UrbanTixsTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		D512EFC587C42D45C729F641 /* Pods-UrbanTixs-UrbanTixsTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UrbanTixs-UrbanTixsTests.release.xcconfig"; path = "Target Support Files/Pods-UrbanTixs-UrbanTixsTests/Pods-UrbanTixs-UrbanTixsTests.release.xcconfig"; sourceTree = "<group>"; };
-		DE651CAC2B29737300CF8A3C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../GoogleService-Info.plist"; sourceTree = "<group>"; };
+		AD4533D2E1E167EBB72DF803 /* Pods-UrbanTixs-UrbanTixsTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UrbanTixs-UrbanTixsTests.release.xcconfig"; path = "Target Support Files/Pods-UrbanTixs-UrbanTixsTests/Pods-UrbanTixs-UrbanTixsTests.release.xcconfig"; sourceTree = "<group>"; };
+		BF465900102FB883A099B4A4 /* libPods-UrbanTixs-UrbanTixsTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-UrbanTixs-UrbanTixsTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DE3BD7EC2B306F99006F01BF /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../GoogleService-Info.plist"; sourceTree = "<group>"; };
 		DE7D22642B299B5100BA980F /* UrbanTixs.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = UrbanTixs.entitlements; path = UrbanTixs/UrbanTixs.entitlements; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -55,7 +55,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2A7D8CC54DDB23D5CCB5B980 /* libPods-UrbanTixs-UrbanTixsTests.a in Frameworks */,
+				178EEA072B7DC947E859CFD6 /* libPods-UrbanTixs-UrbanTixsTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,7 +63,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				45850E28211084BE55947C47 /* libPods-UrbanTixs.a in Frameworks */,
+				94046F0A2AEB4A32264666F2 /* libPods-UrbanTixs.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -90,8 +90,8 @@
 		13B07FAE1A68108700A75B9A /* UrbanTixs */ = {
 			isa = PBXGroup;
 			children = (
+				DE3BD7EC2B306F99006F01BF /* GoogleService-Info.plist */,
 				DE7D22642B299B5100BA980F /* UrbanTixs.entitlements */,
-				DE651CAC2B29737300CF8A3C /* GoogleService-Info.plist */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -106,8 +106,8 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				2AD43B0D470C4E6BF01A8EC7 /* libPods-UrbanTixs.a */,
-				B4387F135B806306C255DA49 /* libPods-UrbanTixs-UrbanTixsTests.a */,
+				5AD47562A1DFDD6E92133E77 /* libPods-UrbanTixs.a */,
+				BF465900102FB883A099B4A4 /* libPods-UrbanTixs-UrbanTixsTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -146,10 +146,10 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				773250C184847170463227B2 /* Pods-UrbanTixs.debug.xcconfig */,
-				8CA557065BC8141871409DB9 /* Pods-UrbanTixs.release.xcconfig */,
-				638DF23EF2CDE922D650A8EB /* Pods-UrbanTixs-UrbanTixsTests.debug.xcconfig */,
-				D512EFC587C42D45C729F641 /* Pods-UrbanTixs-UrbanTixsTests.release.xcconfig */,
+				13DDA56B185508CDFE5CC417 /* Pods-UrbanTixs.debug.xcconfig */,
+				48059C50F4137A7E8BDE9127 /* Pods-UrbanTixs.release.xcconfig */,
+				18F635D6475412D451B99220 /* Pods-UrbanTixs-UrbanTixsTests.debug.xcconfig */,
+				AD4533D2E1E167EBB72DF803 /* Pods-UrbanTixs-UrbanTixsTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -161,12 +161,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "UrbanTixsTests" */;
 			buildPhases = (
-				086293D9E8D23C72FEF0D5C2 /* [CP] Check Pods Manifest.lock */,
+				D2635E01D137EAF0A958170B /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				D5FC07F8439CCBE1CEA10E32 /* [CP] Embed Pods Frameworks */,
-				FB54FFB3714C815E52F7A9CC /* [CP] Copy Pods Resources */,
+				AA5AE4B12772501D0FBF97B7 /* [CP] Embed Pods Frameworks */,
+				908B955B8457FA2AA1D90188 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -182,14 +182,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "UrbanTixs" */;
 			buildPhases = (
-				596EB1A0734C4C92B7A7CE37 /* [CP] Check Pods Manifest.lock */,
+				4375BA53B8C49E508DADBD32 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				B4F9B8D0840C5B2C1F5782EA /* [CP] Embed Pods Frameworks */,
-				E466E19C71F8B27CD1066BD4 /* [CP] Copy Pods Resources */,
+				7C3EED466BDC9532D4E2D99C /* [CP] Embed Pods Frameworks */,
+				9C7DFA8A189E37FFB92FBE17 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -241,7 +241,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DE651CAE2B29737400CF8A3C /* GoogleService-Info.plist in Resources */,
+				DE3BD7EE2B306F9A006F01BF /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -251,7 +251,7 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				DE651CAD2B29737400CF8A3C /* GoogleService-Info.plist in Resources */,
+				DE3BD7ED2B306F9A006F01BF /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -274,29 +274,7 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
 		};
-		086293D9E8D23C72FEF0D5C2 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-UrbanTixs-UrbanTixsTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		596EB1A0734C4C92B7A7CE37 /* [CP] Check Pods Manifest.lock */ = {
+		4375BA53B8C49E508DADBD32 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -318,7 +296,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		B4F9B8D0840C5B2C1F5782EA /* [CP] Embed Pods Frameworks */ = {
+		7C3EED466BDC9532D4E2D99C /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -335,24 +313,24 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-UrbanTixs/Pods-UrbanTixs-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		D5FC07F8439CCBE1CEA10E32 /* [CP] Embed Pods Frameworks */ = {
+		908B955B8457FA2AA1D90188 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-UrbanTixs-UrbanTixsTests/Pods-UrbanTixs-UrbanTixsTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-UrbanTixs-UrbanTixsTests/Pods-UrbanTixs-UrbanTixsTests-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			name = "[CP] Embed Pods Frameworks";
+			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-UrbanTixs-UrbanTixsTests/Pods-UrbanTixs-UrbanTixsTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-UrbanTixs-UrbanTixsTests/Pods-UrbanTixs-UrbanTixsTests-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-UrbanTixs-UrbanTixsTests/Pods-UrbanTixs-UrbanTixsTests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-UrbanTixs-UrbanTixsTests/Pods-UrbanTixs-UrbanTixsTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		E466E19C71F8B27CD1066BD4 /* [CP] Copy Pods Resources */ = {
+		9C7DFA8A189E37FFB92FBE17 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -369,21 +347,43 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-UrbanTixs/Pods-UrbanTixs-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		FB54FFB3714C815E52F7A9CC /* [CP] Copy Pods Resources */ = {
+		AA5AE4B12772501D0FBF97B7 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-UrbanTixs-UrbanTixsTests/Pods-UrbanTixs-UrbanTixsTests-resources-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-UrbanTixs-UrbanTixsTests/Pods-UrbanTixs-UrbanTixsTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			name = "[CP] Copy Pods Resources";
+			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-UrbanTixs-UrbanTixsTests/Pods-UrbanTixs-UrbanTixsTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-UrbanTixs-UrbanTixsTests/Pods-UrbanTixs-UrbanTixsTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-UrbanTixs-UrbanTixsTests/Pods-UrbanTixs-UrbanTixsTests-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-UrbanTixs-UrbanTixsTests/Pods-UrbanTixs-UrbanTixsTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D2635E01D137EAF0A958170B /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-UrbanTixs-UrbanTixsTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -438,7 +438,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 638DF23EF2CDE922D650A8EB /* Pods-UrbanTixs-UrbanTixsTests.debug.xcconfig */;
+			baseConfigurationReference = 18F635D6475412D451B99220 /* Pods-UrbanTixs-UrbanTixsTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -465,7 +465,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D512EFC587C42D45C729F641 /* Pods-UrbanTixs-UrbanTixsTests.release.xcconfig */;
+			baseConfigurationReference = AD4533D2E1E167EBB72DF803 /* Pods-UrbanTixs-UrbanTixsTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
@@ -489,7 +489,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 773250C184847170463227B2 /* Pods-UrbanTixs.debug.xcconfig */;
+			baseConfigurationReference = 13DDA56B185508CDFE5CC417 /* Pods-UrbanTixs.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -518,7 +518,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8CA557065BC8141871409DB9 /* Pods-UrbanTixs.release.xcconfig */;
+			baseConfigurationReference = 48059C50F4137A7E8BDE9127 /* Pods-UrbanTixs.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -593,6 +593,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers/react/nativemodule/core",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers/platform/ios",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-NativeModulesApple/React_NativeModulesApple.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers/react/renderer/graphics/platform/ios",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
@@ -668,6 +676,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers/react/nativemodule/core",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers/platform/ios",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-NativeModulesApple/React_NativeModulesApple.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers/react/renderer/graphics/platform/ios",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,

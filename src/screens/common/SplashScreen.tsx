@@ -10,8 +10,10 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from '@react-navigation/native';
 import { login_background_color } from "../../constants/custome_colors";
+const {height, width} = Dimensions.get('screen');
 
 import { store } from "../../state/store";
+import { Dimensions } from "react-native";
 
 interface Prop {
     navigation: any;
@@ -63,7 +65,7 @@ const SplashScreen: React.FC<Prop> = ({ }) => {
         <View style={styles.MainView}>
             {/* <StatusBar backgroundColor="#F5F5F5" barStyle="dark-content" /> */}
             <Image
-                source={require("../../assets/images/logo-header.png")}
+                source={require("../../assets/images/splash.jpg")}
                 style={styles.logo}
             />
         </View>
@@ -78,10 +80,9 @@ const styles = StyleSheet.create({
         backgroundColor: login_background_color
     },
     logo: {
-        width: 300,
-        height: 100,
-        resizeMode: 'contain',
-        marginVertical: 30,
+        width: width,
+        height: height,
+        // resizeMode: 'contain',
     },
 });
 

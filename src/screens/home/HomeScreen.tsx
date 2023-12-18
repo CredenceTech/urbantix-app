@@ -266,12 +266,12 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
                                 <View style={{ height: 3, backgroundColor: status == 'Past' ? white_color : primary_color }} ></View>
                             </TouchableOpacity>
                             <View style={{ width: 3 }}></View>
-                            <TouchableOpacity style={{ flex: 1, backgroundColor: primary_color }} onPress={draftClicked}>
+                            {/* <TouchableOpacity style={{ flex: 1, backgroundColor: primary_color }} onPress={draftClicked}>
                                 <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                                     <Text style={{ color: white_color, textAlign: "center", fontSize: 14, fontWeight: "bold" }}>Draft Events</Text>
                                 </View>
                                 <View style={{ height: 3, backgroundColor: status == 'Draft' ? white_color : primary_color }} ></View>
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
                         </View>
                         {
                             arrayEvent.length > 0 ?

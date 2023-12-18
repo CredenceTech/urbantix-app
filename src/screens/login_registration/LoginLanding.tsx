@@ -9,7 +9,12 @@ import {
   Alert,
   Platform,
 } from 'react-native';
-import {background_color, green_color} from '../../constants/custome_colors';
+import {
+  background_color,
+  black_color,
+  green_color,
+  white_color,
+} from '../../constants/custome_colors';
 import {Dimensions} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
@@ -17,10 +22,20 @@ import {socialLogin} from '../../constants/services';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import appleAuth from '@invertase/react-native-apple-authentication';
 import ProgressDialogView from '../../components/PreogressBar';
+import {AccessToken, LoginManager} from 'react-native-fbsdk-next';
+import {TextInput} from 'react-native';
+import { postParamRequest } from '../../constants/api_manager';
+import { login } from '../../constants/api_constants';
 const {height, width} = Dimensions.get('screen');
 
 const App = () => {
+  const navigation = useNavigation();
   const [progressBar, setProgressBar] = useState(false);
+  const [inputValue, setInputValue] = useState({
+    email: '',
+    password: '',
+  });
+
   useEffect(() => {
     GoogleSignin.configure({
       webClientId:
@@ -100,45 +115,163 @@ const App = () => {
       }
     } catch (err) {
       console.log(err, 'Error');
-        setProgressBar(false);
+      setProgressBar(false);
     }
   }
 
-  const navigation = useNavigation();
+  // async function onFacebookButtonPress() {
+  //   // Attempt login with permissions
+  //   const result = await LoginManager.logInWithPermissions([
+  //     'public_profile',
+  //     'email',
+  //   ]);
+
+  //   if (result.isCancelled) {
+  //     throw 'User cancelled the login process';
+  //   }
+
+  //   // Once signed in, get the users AccessToken
+  //   const data = await AccessToken.getCurrentAccessToken();
+
+  //   if (!data) {
+  //     throw 'Something went wrong obtaining access token';
+  //   }
+
+  //   // Create a Firebase credential with the AccessToken
+  //   const facebookCredential = auth.FacebookAuthProvider.credential(
+  //     data.accessToken,
+  //   );
+
+  //   // Sign-in the user with the credential
+  //   const results = auth().signInWithCredential(facebookCredential);
+  //   console.log(results, 'Results');
+  // }
+
+  const logInClicked = async () => {
+    setProgressBar(true);
+    // Check if email or password is empty
+    if (!inputValue.email || !inputValue.password) {
+        Alert.alert("Validation Error", "Both email and password fields are required");
+        setProgressBar(false);
+        return;
+    }
+    // Regular expression to validate email format
+    const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+    if (!emailRegex.test(inputValue.email)) {
+        Alert.alert("Validation Error", "Please enter a valid email address");
+        setProgressBar(false);
+        return;
+    }
+
+    //LOGIN API CALL
+    var params = JSON.stringify({
+        'email': inputValue.email,
+        'password': inputValue.password,
+    })
+    const [ success, message, data, error ] = await postParamRequest(login, params);
+    if (error != null) {
+        Alert.alert("Error", error);
+    }
+    else if (success == false || data == null) {
+        Alert.alert("Failed", message);
+    }
+    else {
+        if (data && data !== undefined && data !== null) {
+            const user = data.user;
+            //dispatch(saveUser(user));
+            try {
+                await EncryptedStorage.setItem(
+                    "user_session",
+                    JSON.stringify({
+                        user
+                    })
+                );
+
+                // Congrats! You've just stored your first value!
+            } catch (error) {
+                // There was an error on the native side
+            }
+
+            navigation.navigate('Home');
+        }
+    }
+    setProgressBar(false);
+};
 
   return (
     <SafeAreaView>
       {/* <StatusBar backgroundColor="#F5F5F5" barStyle="dark-content" /> */}
-      <ScrollView>
+      <ScrollView bounces={false}>
         <View
           style={{
             flex: 1,
             backgroundColor: background_color,
-            height: height * 1,
+            height: height,
             paddingHorizontal: width * 0.1,
-            paddingTop: height * 0.05,
             // justifyContent: 'space-between'
             // paddingVertical: height * 0.05,
           }}>
-          <View style={{marginBottom: height * 0.25}}>
+          <View
+            style={{
+              marginTop: 25,
+            }}>
             <Text style={{color: '#FFF', fontSize: 44, fontWeight: 'bold'}}>
               Let's Get You Logged In
             </Text>
-            <Text style={{color: '#FFF', marginTop: 10, fontWeight: '500'}}>
+            {/* <Text style={{color: '#FFF', marginTop: 10, fontWeight: '500'}}>
               Please log-in to your account with one of the options presented
               below.
-            </Text>
+            </Text> */}
           </View>
-          <View>
-            <View style={{marginBottom: 20}}>
+          <View
+            style={{
+              marginTop: 25,
+            }}>
+            <Text style={{fontSize: 15, color: '#FFF', marginVertical: 6}}>
+              Please log in with your
+            </Text>
+            <TextInput
+              style={styles.primary_textfield}
+              keyboardType="email-address"
+              placeholder="E-mail Address"
+              placeholderTextColor="#808080"
+              onChangeText={text => setInputValue({...inputValue, email: text})}
+              value={inputValue.email}
+            />
+            <TextInput
+              style={[styles.primary_textfield, {marginTop: 15}]}
+              placeholder="Password"
+              placeholderTextColor="#808080"
+              onChangeText={text =>
+                setInputValue({...inputValue, password: text})
+              }
+              value={inputValue.password}
+            />
+            <View style={{marginTop: 15}}>
               <TouchableOpacity
                 style={[styles.buttonItem, {paddingVertical: height * 0.016}]}
-                onPress={() => {
-                  navigation.navigate('LoginScreen');
-                }}>
-                <Text style={[styles.title]}>Log-in with e-mail address</Text>
+                onPress={logInClicked}>
+                <Text style={[styles.title]}>Continue</Text>
               </TouchableOpacity>
             </View>
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexDirection: 'row',
+                width: '97%',
+                marginTop: 20,
+                marginLeft: 5,
+              }}>
+              <View style={styles.horizontalLine} />
+              <Text style={styles.orText}>Or</Text>
+              <View style={styles.horizontalLine} />
+            </View>
+          </View>
+          <View
+            style={{
+              marginTop: 30,
+            }}>
             {Platform.OS === 'ios' && (
               <View style={{marginBottom: 20}}>
                 <TouchableOpacity
@@ -155,7 +288,7 @@ const App = () => {
                 <Text style={[styles.title]}>Continue with Google</Text>
               </TouchableOpacity>
             </View>
-            <View style={{marginBottom: 20}}>
+            <View>
               <TouchableOpacity
                 style={[styles.buttonItem, {paddingVertical: height * 0.016}]}
                 onPress={() => {}}>
@@ -189,6 +322,35 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     color: '#FFF',
+  },
+  primary_textfield: {
+    fontSize: 14,
+    fontWeight: 'normal',
+    color: black_color,
+    backgroundColor: white_color,
+    borderColor: green_color,
+    borderWidth: 2,
+    borderRadius: 10,
+    height: 48,
+    paddingHorizontal: 20,
+  },
+  horizontalLine: {
+    flex: 1,
+    height: 2,
+    backgroundColor: 'white',
+  },
+  orText: {
+    color: '#000',
+    fontSize: 13,
+    fontWeight: 'bold',
+    backgroundColor: 'white',
+    paddingHorizontal: 15,
+    paddingVertical: 1,
+    borderRadius: 12,
+    minWidth: 50, 
+    overflow: 'hidden',
+    justifyContent: "center",
+    alignItems: "center"
   },
 });
 

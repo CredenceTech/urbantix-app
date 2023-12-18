@@ -64,7 +64,6 @@ const postParamRequest = async (url, params) => {
       return [false, null, null, error]
     })
     if (result != null) {
-      console.log(result);
       let success = result.success;
       let message = result.message;
       let data = result.data;
