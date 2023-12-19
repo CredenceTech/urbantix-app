@@ -5,7 +5,7 @@
  * @format
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from "@react-navigation/native";
 import { Provider } from "react-redux";
@@ -18,6 +18,7 @@ import LoginScreen from './src/screens/login_registration/LoginScreen';
 import LoginLanding from './src/screens/login_registration/LoginLanding';
 import HomeScreen from './src/screens/home/HomeScreen';
 import EventGuestsScreen from './src/screens/home/EventGuestsScreen';
+import {Settings} from 'react-native-fbsdk-next';
 //SCREENS END
 
 import {
@@ -50,6 +51,10 @@ function App() {
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+
+  useEffect(() => {
+    Settings.setAdvertiserTrackingEnabled(true);
+  }, []);
 
   return (
     <Provider store={store}>

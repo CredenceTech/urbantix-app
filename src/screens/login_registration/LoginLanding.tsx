@@ -27,6 +27,7 @@ import {TextInput} from 'react-native';
 import { postParamRequest } from '../../constants/api_manager';
 import { login } from '../../constants/api_constants';
 const {height, width} = Dimensions.get('screen');
+import auth from '@react-native-firebase/auth';
 
 const App = () => {
   const navigation = useNavigation();
@@ -119,33 +120,56 @@ const App = () => {
     }
   }
 
-  // async function onFacebookButtonPress() {
-  //   // Attempt login with permissions
-  //   const result = await LoginManager.logInWithPermissions([
-  //     'public_profile',
-  //     'email',
-  //   ]);
+  async function onFacebookButtonPress() {
+    const result = await LoginManager.logInWithPermissions([
+      'public_profile',
+      'email',
+    ]);
 
-  //   if (result.isCancelled) {
-  //     throw 'User cancelled the login process';
-  //   }
+    if (result.isCancelled) {
+      throw 'User cancelled the login process';
+    }
 
-  //   // Once signed in, get the users AccessToken
-  //   const data = await AccessToken.getCurrentAccessToken();
+    const data = await AccessToken.getCurrentAccessToken();
 
-  //   if (!data) {
-  //     throw 'Something went wrong obtaining access token';
-  //   }
+    if (!data) {
+      throw 'Something went wrong obtaining access token';
+    }
 
-  //   // Create a Firebase credential with the AccessToken
-  //   const facebookCredential = auth.FacebookAuthProvider.credential(
-  //     data.accessToken,
-  //   );
+    const facebookCredential = auth.FacebookAuthProvider.credential(
+      data.accessToken,
+    );
 
-  //   // Sign-in the user with the credential
-  //   const results = auth().signInWithCredential(facebookCredential);
-  //   console.log(results, 'Results');
-  // }
+    // Sign-in the user with the credential
+    auth().signInWithCredential(facebookCredential).then(async (data) => {
+      const params = {
+        email: data?.user?.email,
+        first_name: data?.additionalUserInfo?.profile?.first_name,
+        last_name: data?.additionalUserInfo?.profile?.last_name,
+        image: data?.user?.photoURL,
+        socialMediaId: data?.user?.uid,
+        socialMediaType: 'Facebook',
+      };
+      setProgressBar(true);
+
+      const result = await socialLogin(params);
+
+      if (result?.success) {
+        const user = result?.data?.user;
+        await EncryptedStorage.setItem(
+          'user_session',
+          JSON.stringify({user}),
+        );
+        setProgressBar(false);
+        navigation.navigate('Home');
+      } else {
+        setProgressBar(false);
+        Alert.alert('Error', result?.message);
+      }
+    }).catch((error) => {
+      console.log(error)
+    });
+  }
 
   const logInClicked = async () => {
     setProgressBar(true);
@@ -291,7 +315,7 @@ const App = () => {
             <View>
               <TouchableOpacity
                 style={[styles.buttonItem, {paddingVertical: height * 0.016}]}
-                onPress={() => {}}>
+               onPress= {onFacebookButtonPress}>
                 <Text style={[styles.title]}>Continue with Facebook</Text>
               </TouchableOpacity>
             </View>
