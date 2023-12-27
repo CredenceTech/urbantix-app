@@ -74,15 +74,8 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.credencetech.urbantixs"
-    defaultConfig {
-        applicationId "com.credencetech.urbantixs"
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
-        missingDimensionStrategy 'react-native-camera', 'general'
-    }
+    namespace "com.urbantixs"
+    
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
@@ -90,6 +83,21 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+         release {
+            storeFile file('urbantixs.keystore')
+            storePassword 'Shashank@123'
+            keyAlias 'key01'
+            keyPassword 'Shashank@123'
+        }
+    }
+    defaultConfig {
+        applicationId "com.urbantixs"
+        minSdkVersion 28     
+        targetSdkVersion 33   
+        versionCode 1
+        versionName "1.0"
+        missingDimensionStrategy 'react-native-camera', 'general'
+         signingConfig signingConfigs.release
     }
     buildTypes {
         debug {
@@ -98,7 +106,7 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }

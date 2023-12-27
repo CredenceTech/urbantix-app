@@ -1,4 +1,4 @@
-package com.credencetech.urbantixs;
+package com.urbantixs;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

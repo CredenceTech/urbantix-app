@@ -44,7 +44,6 @@ const getParamRequest = async (url: string) => {
       return [false, null, null, error]
     })
     if (result != null) {
-      console.log(result);
       let success = result.success;
       let message = result.message;
       let data = result.data;

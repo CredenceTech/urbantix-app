@@ -151,9 +151,6 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
             'userId': userID,
             'status': status
         })
-        console.log('====================================');
-        console.log(params);
-        console.log('====================================');
         const [success, message, data, error] = await postParamRequest(events_list, params);
         if (error != null) {
             Alert.alert("Error", error);
@@ -172,10 +169,6 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
                 else {
                     setArrayEvent(...arrayEvent, data.events);
                 }
-
-                console.log('====================================');
-                console.log(arrayEvent.length);
-                console.log('====================================');
             }
             else {
                 setArrayEvent([]);
@@ -192,7 +185,6 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
         Alert.alert('Logout', 'Are you sure you want to logout?', [
             {
                 text: 'Cancel',
-                onPress: () => console.log('Cancel Pressed'),
                 style: 'cancel',
             },
             {
@@ -204,7 +196,6 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
     }
 
     const userLogout = async () => {
-        console.log('OK Pressed');
         await GoogleSignin.signOut();
         removeUserSession();
         navigation.navigate('LoginLanding');
