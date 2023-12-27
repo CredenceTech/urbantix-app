@@ -40,7 +40,7 @@ const App = () => {
   useEffect(() => {
     GoogleSignin.configure({
       webClientId:
-        '949818663835-mbv4q5hoa8jh149hs9bj6ke2ppfqb32k.apps.googleusercontent.com',
+        '949818663835-tjrt4cbskqqfr7racjog0l0r7fom58lg.apps.googleusercontent.com',
     });
   }, []);
 
@@ -72,7 +72,6 @@ const App = () => {
       }
     } catch (error) {
       setProgressBar(false);
-      console.log(error, 'Error');
     }
   }
 
@@ -115,7 +114,6 @@ const App = () => {
         setProgressBar(false);
       }
     } catch (err) {
-      console.log(err, 'Error');
       setProgressBar(false);
     }
   }

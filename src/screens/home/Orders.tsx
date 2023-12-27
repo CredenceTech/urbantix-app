@@ -93,7 +93,6 @@ const Orders = () => {
         }
         let apiUrl = ordersUrl;
         const [success, message, data, error]: any = await getParamRequest(apiUrl);
-        console.log("first, DATA", data)
         if (error != null) {
             Alert.alert("Error", error);
             setArrayEvent([]);
@@ -117,7 +116,6 @@ const Orders = () => {
         Alert.alert('Logout', 'Are you sure you want to logout?', [
             {
                 text: 'Cancel',
-                onPress: () => console.log('Cancel Pressed'),
                 style: 'cancel',
             },
             {
@@ -128,11 +126,7 @@ const Orders = () => {
         ]);
     }
 
-
-    // console.log("firstsdasdasdasdasdasdasdasdas  total", totalEvents)
-
     const userLogout = () => {
-        console.log('OK Pressed');
         removeUserSession();
         navigation.navigate('LoginLanding');
 

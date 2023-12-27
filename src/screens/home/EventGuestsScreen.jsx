@@ -47,13 +47,6 @@ const EventGuestsScreen: React.FC<Prop> = ({ }) => {
     const [currentpage, setCurrentpage] = useState(1);
 
     useEffect(() => {
-        console.log('====================================');
-        console.log("this.props.objEvent");
-        console.log(objEvent);
-        console.log('====================================');
-    }, [])
-
-    useEffect(() => {
         getEventGuests();
     }, [currentpage])
 
@@ -80,9 +73,6 @@ const EventGuestsScreen: React.FC<Prop> = ({ }) => {
 
         //LOGIN API CALL
         let apiEndpoint = event_checkedin_list + '/' + objEvent.id + '/' + 'transactions?keyword=' + search + '&pageNumber=' + currentpage + '&pageSize=10'
-        console.log('====================================');
-        console.log(apiEndpoint);
-        console.log('====================================');
         const [success, message, data, error] = await getParamRequest(apiEndpoint);
         if (error !== null) {
             Alert.alert("Error", error);
@@ -99,10 +89,6 @@ const EventGuestsScreen: React.FC<Prop> = ({ }) => {
                     else {
                         setArrayEventGuests(...arrayEventGuests, data);
                     }
-
-                    console.log('====================================');
-                    console.log(arrayEventGuests.length);
-                    console.log('====================================');
                 }
             }
         }
@@ -117,7 +103,6 @@ const EventGuestsScreen: React.FC<Prop> = ({ }) => {
         Alert.alert('Logout', 'Are you sure you want to logout?', [
             {
                 text: 'Cancel',
-                onPress: () => console.log('Cancel Pressed'),
                 style: 'cancel',
             },
             {
@@ -129,7 +114,6 @@ const EventGuestsScreen: React.FC<Prop> = ({ }) => {
     }
 
     const userLogout = () => {
-        console.log('OK Pressed');
         removeUserSession();
         navigation.navigate('LoginLanding');
 
