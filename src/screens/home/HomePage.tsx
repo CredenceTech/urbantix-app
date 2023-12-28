@@ -6,6 +6,7 @@ import { Path, Svg } from 'react-native-svg';
 import HomeScreen from './HomeScreen';
 import Orders from './Orders';
 import QRScanner from '../QRCodeScanner';
+import UserProfile from '../profile/UserProfile';
 // import ProductIcon from "../assets/img/ProductIconSvg.svg"
 
 const Tab = createBottomTabNavigator();
@@ -154,7 +155,7 @@ const HomePage = () => {
       />
       <Tab.Screen
         name="User Profile"
-        component={() => { }}
+        component={UserProfile}
         options={{
           tabBarIcon: ({ focused }) => (
             <View
