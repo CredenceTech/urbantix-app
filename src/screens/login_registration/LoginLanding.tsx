@@ -8,12 +8,14 @@ import {
   Text,
   Alert,
   Platform,
+  StatusBar
 } from 'react-native';
 import {
   background_color,
   black_color,
   green_color,
   white_color,
+  primary_color
 } from '../../constants/custome_colors';
 import {Dimensions} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
@@ -28,8 +30,12 @@ import { postParamRequest } from '../../constants/api_manager';
 import { login } from '../../constants/api_constants';
 const {height, width} = Dimensions.get('screen');
 import auth from '@react-native-firebase/auth';
+import { custome_screenContainer } from "../../constants/custome_styles";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const App = () => {
+
+  const safeAreaInsets = useSafeAreaInsets();
   const navigation = useNavigation();
   const [progressBar, setProgressBar] = useState(false);
   const [inputValue, setInputValue] = useState({
@@ -221,6 +227,10 @@ const App = () => {
 };
 
   return (
+    <View style={custome_screenContainer.view_container}>
+        <View style={{ backgroundColor: black_color, height: safeAreaInsets.top }}>
+            <StatusBar backgroundColor='#000000' barStyle="light-content" />
+        </View>
     <SafeAreaView>
       {/* <StatusBar backgroundColor="#F5F5F5" barStyle="dark-content" /> */}
       <ScrollView bounces={false}>
@@ -322,10 +332,17 @@ const App = () => {
       </ScrollView>
       {progressBar && <ProgressDialogView visible={progressBar} />}
     </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  view_container: {
+      flex: 1, 
+      flexDirection: "column", 
+      backgroundColor: background_color,
+      height: 200
+  },
   buttonItem: {
     backgroundColor: green_color,
     borderRadius: 12,
