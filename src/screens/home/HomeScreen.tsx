@@ -273,6 +273,7 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
                                     data={arrayEvent}
                                     renderItem={({ item }) => <EventComponent objEvent={item} actionOnRow={() => actionOnRow(item)} />}
                                     keyExtractor={(item, index) => item.id}
+                                    showsHorizontalScrollIndicator={false}
                                     onEndReached={({ distanceFromEnd }) => {
                                         if (distanceFromEnd < 0) return;
                                         nextPage()
