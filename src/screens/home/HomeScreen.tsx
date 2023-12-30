@@ -270,6 +270,7 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
                                     data={arrayEvent}
                                     renderItem={({ item }) => <EventComponent objEvent={item} actionOnRow={() => actionOnRow(item)} />}
                                     keyExtractor={(item, index) => item.id}
+                                    showsHorizontalScrollIndicator={false}
                                     onEndReached={({ distanceFromEnd }) => {
                                         if (distanceFromEnd < 0) return;
                                         nextPage()
@@ -279,7 +280,7 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
                                 </View>
                         }
                         <View style={{ flexDirection: "row", height: 50 }}>
-                            <TouchableOpacity style={{ flex: 1, paddingHorizontal: 20 }} onPress={pastClicked}>
+                            <TouchableOpacity style={{ flex: 1, paddingHorizontal: 20 }} >
                                 <View style={{ flex: 1, justifyContent: "center" }}>
                                     <Text style={{ color: white_color, textAlign: "left", fontSize: 14, fontWeight: "bold" }}>{userName}</Text>
                                 </View>

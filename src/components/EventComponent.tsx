@@ -43,8 +43,13 @@ class EventComponent extends Component {
                         <View style={{ flex: 1 }} />
                         <Text style={styles.event_datetime}>${this.state.objEvent.minimum_price}</Text>
                     </View>
-                    <Progress.Bar progress={1} color="#3e8b2b" height={2} width={(Dimensions.get('window').width - 30)} />
-                    {/* <Progress.Bar progress={((this.state.objEvent.total_sold / this.state.objEvent.total_tickets) * 100) / 100} color="#3e8b2b" height={2} width={(Dimensions.get('window').width - 30)} /> */}
+                    {/* <Progress.Bar progress={1} color="#3e8b2b" height={2} width={(Dimensions.get('window').width - 30)} /> */}
+                    {this.state.objEvent.total_tickets > 0
+                        ?
+                        <Progress.Bar progress={((this.state.objEvent.total_sold / this.state.objEvent.total_tickets) * 100) / 100} color="#3e8b2b" height={2} width={(Dimensions.get('window').width - 30)} />
+                        :
+                        <Progress.Bar progress={1} color="#3e8b2b" height={2} width={(Dimensions.get('window').width - 30)} />}
+
                 </View>
             </TouchableWithoutFeedback>
         )
