@@ -181,6 +181,9 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
         navigation.goBack();
     }
 
+    const editProfileClicked = async () => {
+    }
+
     const logOutClicked = async () => {
         Alert.alert('Logout', 'Are you sure you want to logout?', [
             {
@@ -280,7 +283,7 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
                                 </View>
                         }
                         <View style={{ flexDirection: "row", height: 50 }}>
-                            <TouchableOpacity style={{ flex: 1, paddingHorizontal: 20 }} >
+                            <TouchableOpacity style={{ flex: 1, paddingHorizontal: 20 }} onPress={editProfileClicked}>
                                 <View style={{ flex: 1, justifyContent: "center" }}>
                                     <Text style={{ color: white_color, textAlign: "left", fontSize: 14, fontWeight: "bold" }}>{userName}</Text>
                                 </View>

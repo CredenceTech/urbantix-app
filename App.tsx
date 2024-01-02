@@ -19,6 +19,7 @@ import LoginLanding from './src/screens/login_registration/LoginLanding';
 import HomeScreen from './src/screens/home/HomeScreen';
 import EventGuestsScreen from './src/screens/home/EventGuestsScreen';
 import {Settings} from 'react-native-fbsdk-next';
+import CommonWebView from './src/screens/profile/CommonWebView';
 //SCREENS END
 
 import {
@@ -69,6 +70,7 @@ function App() {
             <Stack.Screen name="Home" component={HomePage} />
             <Stack.Screen name="Orders" component={Orders} />
             <Stack.Screen name="CheckIn" component={QRScanner} />
+            <Stack.Screen name="CommonWebView" component={CommonWebView} />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>
