@@ -16,11 +16,9 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { useNavigation } from '@react-navigation/native';
-import { background_color, black_color, blue_color, gray_color, primary_color, white_color } from "../../constants/custome_colors";
+import { background_color, black_color, blue_color, gray_color, green_color, primary_color, white_color } from "../../constants/custome_colors";
 import { custome_screenContainer } from "../../constants/custome_styles";
 import moment from 'moment';
-import NavigationBar from "../../components/NavigationBar";
-import EventComponent from "../../components/EventComponent";
 import Loader from "../../components/Loader";
 import { ordersUrl } from "../../constants/api_constants";
 import { getParamRequest, } from "../../constants/api_manager";
@@ -37,7 +35,6 @@ const Orders = () => {
 
     const [isLoading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
-    const [status, setStatus] = useState('Upcoming'); // Past,Upcoming,Draft
     const [arrayEvent, setArrayEvent] = useState([]);
     const [totalEvents, setTotalEvents] = useState(1);
     const [currentpage, setCurrentpage] = useState(1);
@@ -132,6 +129,7 @@ const Orders = () => {
 
     }
 
+
     async function removeUserSession() {
         try {
             await EncryptedStorage.removeItem("user_session");
@@ -140,6 +138,8 @@ const Orders = () => {
             // There was an error on the native side
         }
     }
+
+
     return (
         <View style={custome_screenContainer.view_container}>
             <Loader isLoading={isLoading} />
@@ -166,31 +166,29 @@ const Orders = () => {
                                 }
                                 value={search} />
                         </View>
-
                         {
                             arrayEvent.length > 0 ?
                                 <FlatList
                                     data={arrayEvent}
+                                    showsVerticalScrollIndicator={false}
                                     renderItem={({ item }: any) => {
                                         return (
                                             <View style={styles.main_view}>
-                                                <Text style={styles.event_title}>{item?.event?.name}</Text>
-                                                <Text style={styles.event_address}>{item?.event?.place}</Text>
-                                                <Text style={styles.event_datetime}>{moment(moment(item?.event?.start_date, 'YYYY-MM-DD HH:mm:ss.ZZZ')).format('ddd, MMM D, h:mm A')}</Text>
-                                                <View style={{ flexDirection: "row", marginTop: 10, marginBottom: 5 }}>
-                                                    <Text style={styles.event_datetime}>Ticket Price</Text>
+                                                <Text style={styles.event_title}>{`${item?.user?.first_name} ${item?.user?.last_name}`}</Text>
+                                                <View style={{ flexDirection: "row", marginTop: 5, marginBottom: 5 }}>
+                                                    <Text style={styles.event_datetime}>{item?.user?.email}</Text>
                                                     <View style={{ flex: 1 }} />
-                                                    <Text style={styles.event_datetime}>$ {item?.event?.tickets[0]?.price}</Text>
+                                                    <Text style={styles.event_datetime}>{moment(moment(item?.created_at, 'YYYY-MM-DD HH:mm:ss.ZZZ')).format('L')}</Text>
                                                 </View>
-                                                <View style={[{ flexDirection: "row", borderBottomWidth: 1, borderBottomColor: '#fff' }]}>
-                                                    <Text style={styles.event_datetime}>Order fees</Text>
+                                                {/* <View style={[{ flexDirection: "row" }]}>
+                                                    <Text style={styles.event_datetime}>Order # {item?.orderNumber}</Text>
                                                     <View style={{ flex: 1 }} />
-                                                    <Text style={[styles.event_datetime, { paddingBottom: 4 }]}>$ {item?.event?.tickets[0]?.order_fees}</Text>
-                                                </View>
-                                                <View style={{ flexDirection: "row", marginTop: 10, marginBottom: 5 }}>
-                                                    <Text style={styles.event_datetime}>Total Amount</Text>
+                                                    <Text style={[styles.event_datetime, { paddingBottom: 4 }]}>{item?.payment}</Text>
+                                                </View> */}
+                                                <View style={[{ flexDirection: "row", borderBottomWidth: 2, borderBottomColor: green_color }]}>
+                                                    <Text style={styles.event_datetime}></Text>
                                                     <View style={{ flex: 1 }} />
-                                                    <Text style={styles.event_datetime}>$ {item?.event?.tickets[0]?.total_amount}</Text>
+                                                    <Text style={[styles.event_datetime, { paddingBottom: 4 }]}>$ {item?.total_amount}</Text>
                                                 </View>
                                             </View>
                                         )
@@ -202,11 +200,9 @@ const Orders = () => {
                                 </View>
                         }
                         <View style={{ flexDirection: "row", height: 50 }}>
-                            <TouchableOpacity style={{ flex: 1, paddingHorizontal: 20 }} >
-                                <View style={{ flex: 1, justifyContent: "center" }}>
-                                    <Text style={{ color: white_color, textAlign: "left", fontSize: 14, fontWeight: "bold" }}>{userName}</Text>
-                                </View>
-                            </TouchableOpacity>
+                            <View style={{ flex: 1, justifyContent: "center", paddingHorizontal: 20 }}>
+                                <Text style={{ color: white_color, textAlign: "left", fontSize: 14, fontWeight: "bold" }}>{userName}</Text>
+                            </View>
                             <TouchableOpacity style={{ width: 130 }} onPress={logOutClicked}>
                                 <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                                     <Text style={{ color: blue_color, textAlign: "center", fontSize: 14, fontWeight: "bold" }}>Log me out</Text>
