@@ -2,32 +2,20 @@ import React from "react";
 import axios from "axios";
 import { store } from "../state/store";
 import { baseURL, login } from "../constants/api_constants";
-import EncryptedStorage from 'react-native-encrypted-storage';
 
 const api = axios.create({
   baseURL: baseURL, // Replace with your API base URL
 });
 
+
 // Request interceptor
 api.interceptors.request.use(
   async config => {
-    let token = '';
-
-    try {
-      const session = await EncryptedStorage.getItem("user_session");
-      if (session !== undefined) {
-        let userObj = JSON.parse(session);
-        if (userObj.user != null && userObj.user.access_token != null) {
-          token = userObj.user.access_token;
-        }
-      }
-    } catch (error) {
-      // There was an error on the native side
-    }
+    const authenticationUser = store.getState().authentication;
 
     config.headers['Accept'] = 'application/json'; // Replace with your authorization logic
     config.headers['Content-Type'] = 'application/json'; // Replace with your authorization logic
-    config.headers.Authorization = 'Bearer ' + token; // Replace with your authorization logic
+    config.headers.Authorization = 'Bearer ' + authenticationUser?.user?.access_token; // Replace with your authorization logic
     return config;
   },
   error => {

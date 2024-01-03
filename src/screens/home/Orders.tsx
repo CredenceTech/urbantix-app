@@ -14,7 +14,6 @@ import {
     TextInput,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import EncryptedStorage from 'react-native-encrypted-storage';
 import { useNavigation } from '@react-navigation/native';
 import { background_color, black_color, blue_color, gray_color, green_color, primary_color, white_color } from "../../constants/custome_colors";
 import { custome_screenContainer } from "../../constants/custome_styles";
@@ -22,6 +21,8 @@ import moment from 'moment';
 import Loader from "../../components/Loader";
 import { ordersUrl } from "../../constants/api_constants";
 import { getParamRequest, } from "../../constants/api_manager";
+import { useDispatch, useSelector } from "react-redux";
+import { removeUser } from "../../state/slices/authenticationSlice";
 
 
 interface Prop {
@@ -29,49 +30,15 @@ interface Prop {
 }
 
 const Orders = () => {
-
+    const authentication = useSelector((state) => state.authentication)
     const safeAreaInsets = useSafeAreaInsets();
     const navigation = useNavigation();
-
+    const dispatch = useDispatch();
     const [isLoading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [arrayEvent, setArrayEvent] = useState([]);
     const [totalEvents, setTotalEvents] = useState(1);
     const [currentpage, setCurrentpage] = useState(1);
-
-    const [userName, setUserName] = useState('-');
-
-    useEffect(() => {
-        getUserName();
-    }, [])
-
-    const getUserName = async () => {
-        var userName = '';
-
-        try {
-            const session = await EncryptedStorage.getItem("user_session");
-            if (session !== undefined) {
-                let userObj = JSON.parse(session);
-                if (userObj.user != null && userObj.user != undefined) {
-                    if (userObj.user.first_name != undefined && userObj.user.first_name != null) {
-                        userName = userObj.user.first_name;
-                    }
-                    if (userObj.user.last_name != undefined && userObj.user.last_name != null) {
-                        if (userName != '') {
-                            userName = userName + ' ' + userObj.user.last_name;
-                        }
-                        else {
-                            userName = userObj.user.last_name;
-                        }
-                    }
-                }
-            }
-        } catch (error) {
-            // There was an error on the native side
-        }
-
-        setUserName(userName);
-    }
 
 
     useEffect(() => {
@@ -90,13 +57,10 @@ const Orders = () => {
         }
         let apiUrl = ordersUrl;
         const [success, message, data, error]: any = await getParamRequest(apiUrl);
+
         if (error != null) {
             Alert.alert("Error", error);
             setArrayEvent([]);
-        }
-        else if (success == false || data == null) {
-            setArrayEvent([]);
-            Alert.alert("Failed", message);
         }
         else {
             if (data) {
@@ -123,22 +87,10 @@ const Orders = () => {
         ]);
     }
 
-    const userLogout = () => {
-        removeUserSession();
+    const userLogout = async () => {
         navigation.navigate('LoginLanding');
-
+        dispatch(removeUser())
     }
-
-
-    async function removeUserSession() {
-        try {
-            await EncryptedStorage.removeItem("user_session");
-            // Congrats! You've just removed your first value!
-        } catch (error) {
-            // There was an error on the native side
-        }
-    }
-
 
     return (
         <View style={custome_screenContainer.view_container}>
@@ -178,7 +130,7 @@ const Orders = () => {
                                                 <View style={{ flexDirection: "row", marginTop: 5, marginBottom: 5 }}>
                                                     <Text style={styles.event_datetime}>{item?.user?.email}</Text>
                                                     <View style={{ flex: 1 }} />
-                                                    <Text style={styles.event_datetime}>{moment(moment(item?.created_at, 'YYYY-MM-DD HH:mm:ss.ZZZ')).format('L')}</Text>
+                                                    <Text style={styles.event_datetime}>{moment(moment(item?.created_at, 'YYYY-MM-DD HH:mm:ss.ZZZ')).format('ll')}</Text>
                                                 </View>
                                                 {/* <View style={[{ flexDirection: "row" }]}>
                                                     <Text style={styles.event_datetime}>Order # {item?.orderNumber}</Text>
@@ -201,7 +153,7 @@ const Orders = () => {
                         }
                         <View style={{ flexDirection: "row", height: 50 }}>
                             <View style={{ flex: 1, justifyContent: "center", paddingHorizontal: 20 }}>
-                                <Text style={{ color: white_color, textAlign: "left", fontSize: 14, fontWeight: "bold" }}>{userName}</Text>
+                                <Text style={{ color: white_color, textAlign: "left", fontSize: 14, fontWeight: "bold" }}>{`${authentication?.user?.first_name} ${authentication?.user?.last_name}`}</Text>
                             </View>
                             <TouchableOpacity style={{ width: 130 }} onPress={logOutClicked}>
                                 <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>

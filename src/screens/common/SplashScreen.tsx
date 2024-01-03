@@ -6,14 +6,14 @@ import {
     StatusBar,
     StyleSheet,
 } from "react-native";
-import EncryptedStorage from 'react-native-encrypted-storage';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from '@react-navigation/native';
 import { login_background_color } from "../../constants/custome_colors";
-const {height, width} = Dimensions.get('screen');
+const { height, width } = Dimensions.get('screen');
 
 import { store } from "../../state/store";
 import { Dimensions } from "react-native";
+import { useSelector } from "react-redux";
 
 interface Prop {
     navigation: any;
@@ -22,7 +22,7 @@ interface Prop {
 const SplashScreen: React.FC<Prop> = ({ }) => {
 
     const navigation = useNavigation();
-
+    const authentication = useSelector((state) => state.authentication)
     useEffect(() => {
         //NAVIGATE AFTER 2 SECONDS
         setTimeout(() => {
@@ -41,11 +41,9 @@ const SplashScreen: React.FC<Prop> = ({ }) => {
 
     async function retrieveUserSession() {
         try {
-            const session = await EncryptedStorage.getItem("user_session");
-            if (session !== undefined) {
-                let userObj = JSON.parse(session);
+            if (authentication !== null) {
                 // Congrats! You've just retrieved your first value!
-                if (userObj.user != null && userObj.user.access_token != null) {
+                if (authentication?.user != null && authentication?.user?.access_token != null) {
                     navigation.navigate('Home');
                 }
                 else {

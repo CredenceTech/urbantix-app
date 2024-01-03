@@ -21,7 +21,6 @@ import { Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { socialLogin } from '../../constants/services';
-import EncryptedStorage from 'react-native-encrypted-storage';
 import appleAuth from '@invertase/react-native-apple-authentication';
 import ProgressDialogView from '../../components/PreogressBar';
 import { AccessToken, LoginManager } from 'react-native-fbsdk-next';
@@ -32,9 +31,11 @@ const { height, width } = Dimensions.get('screen');
 import auth from '@react-native-firebase/auth';
 import { custome_screenContainer } from "../../constants/custome_styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useDispatch } from 'react-redux';
+import { saveUser } from '../../state/slices/authenticationSlice';
 
 const App = () => {
-
+  const dispatch = useDispatch();
   const safeAreaInsets = useSafeAreaInsets();
   const navigation = useNavigation();
   const [progressBar, setProgressBar] = useState(false);
@@ -42,7 +43,6 @@ const App = () => {
     email: '',
     password: '',
   });
-
   useEffect(() => {
     GoogleSignin.configure({
       webClientId:
@@ -52,6 +52,7 @@ const App = () => {
 
   async function signInWithGoogle() {
     try {
+      await GoogleSignin.signOut();
       await GoogleSignin.hasPlayServices();
       const { user } = await GoogleSignin.signIn();
       const params = {
@@ -66,10 +67,12 @@ const App = () => {
       setProgressBar(true);
 
       const result = await socialLogin(params);
-
+      console.log("first", result)
       if (result?.success) {
         const user = result?.data?.user;
-        await EncryptedStorage.setItem('user_session', JSON.stringify({ user }));
+        if (user) {
+          dispatch(saveUser(user))
+        }
         setProgressBar(false);
         navigation.navigate('Home');
       } else {
@@ -106,10 +109,9 @@ const App = () => {
 
         if (result?.success) {
           const user = result?.data?.user;
-          await EncryptedStorage.setItem(
-            'user_session',
-            JSON.stringify({ user }),
-          );
+          if (user) {
+            dispatch(saveUser(user))
+          }
           setProgressBar(false);
           navigation.navigate('Home');
         } else {
@@ -160,10 +162,9 @@ const App = () => {
 
       if (result?.success) {
         const user = result?.data?.user;
-        await EncryptedStorage.setItem(
-          'user_session',
-          JSON.stringify({ user }),
-        );
+        if (user) {
+          dispatch(saveUser(user))
+        }
         setProgressBar(false);
         navigation.navigate('Home');
       } else {
@@ -206,20 +207,9 @@ const App = () => {
     else {
       if (data && data !== undefined && data !== null) {
         const user = data.user;
-        //dispatch(saveUser(user));
-        try {
-          await EncryptedStorage.setItem(
-            "user_session",
-            JSON.stringify({
-              user
-            })
-          );
-
-          // Congrats! You've just stored your first value!
-        } catch (error) {
-          // There was an error on the native side
+        if (user) {
+          dispatch(saveUser(user))
         }
-
         navigation.navigate('Home');
       }
     }

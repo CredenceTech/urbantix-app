@@ -14,7 +14,6 @@ import {
     TextInput,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import EncryptedStorage from 'react-native-encrypted-storage';
 import { useNavigation } from '@react-navigation/native';
 import { background_color, black_color, blue_color, gray_color, primary_color, white_color } from "../../constants/custome_colors";
 import { custome_screenContainer, custome_buttons, custome_textfields } from "../../constants/custome_styles";
@@ -25,6 +24,8 @@ import Loader from "../../components/Loader";
 import { events_list } from "../../constants/api_constants";
 import { postParamRequest } from "../../constants/api_manager";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import { useDispatch, useSelector } from "react-redux";
+import { removeUser } from "../../state/slices/authenticationSlice";
 
 
 interface Prop {
@@ -32,50 +33,16 @@ interface Prop {
 }
 
 const HomeScreen: React.FC<Prop> = ({ }) => {
-
+    const authentication = useSelector((state) => state.authentication)
     const safeAreaInsets = useSafeAreaInsets();
     const navigation = useNavigation();
-
+    const dispatch = useDispatch();
     const [isLoading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [status, setStatus] = useState('Upcoming'); // Past,Upcoming,Draft
     const [arrayEvent, setArrayEvent] = useState([]);
     const [totalEvents, setTotalEvents] = useState(1);
     const [currentpage, setCurrentpage] = useState(1);
-
-    const [userName, setUserName] = useState('-');
-
-    useEffect(() => {
-        getUserName();
-    }, [])
-
-    const getUserName = async () => {
-        var userName = '';
-
-        try {
-            const session = await EncryptedStorage.getItem("user_session");
-            if (session !== undefined) {
-                let userObj = JSON.parse(session);
-                if (userObj.user != null && userObj.user != undefined) {
-                    if (userObj.user.first_name != undefined && userObj.user.first_name != null) {
-                        userName = userObj.user.first_name;
-                    }
-                    if (userObj.user.last_name != undefined && userObj.user.last_name != null) {
-                        if (userName != '') {
-                            userName = userName + ' ' + userObj.user.last_name;
-                        }
-                        else {
-                            userName = userObj.user.last_name;
-                        }
-                    }
-                }
-            }
-        } catch (error) {
-            // There was an error on the native side
-        }
-
-        setUserName(userName);
-    }
 
 
     useEffect(() => {
@@ -127,20 +94,6 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
             setLoading(true);
         }
 
-        var userID = '';
-
-        try {
-            const session = await EncryptedStorage.getItem("user_session");
-            if (session !== undefined) {
-                let userObj = JSON.parse(session);
-                if (userObj.user != null && userObj.user.id != null) {
-                    userID = userObj.user.id;
-                }
-            }
-        } catch (error) {
-            // There was an error on the native side
-        }
-
         //LOGIN API CALL
         var params = JSON.stringify({
             'keyword': search,
@@ -148,7 +101,7 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
             'pageSize': 4,
             'isLogin': true,
             'isLike': false,
-            'userId': userID,
+            'userId': authentication?.user?.id,
             'status': status
         })
         const [success, message, data, error] = await postParamRequest(events_list, params);
@@ -181,8 +134,6 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
         navigation.goBack();
     }
 
-    const editProfileClicked = async () => {
-    }
 
     const logOutClicked = async () => {
         Alert.alert('Logout', 'Are you sure you want to logout?', [
@@ -199,24 +150,12 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
     }
 
     const userLogout = async () => {
-        await GoogleSignin.signOut();
-        removeUserSession();
         navigation.navigate('LoginLanding');
-
-    }
-
-    async function removeUserSession() {
-        try {
-            await EncryptedStorage.removeItem("user_session");
-            // Congrats! You've just removed your first value!
-        } catch (error) {
-            // There was an error on the native side
-        }
+        dispatch(removeUser())
     }
 
     const actionOnRow = (item: any) => {
         navigation.navigate('EventGuestsScreen', { objEvent: item });
-
     }
 
     return (
@@ -283,11 +222,9 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
                                 </View>
                         }
                         <View style={{ flexDirection: "row", height: 50 }}>
-                            <TouchableOpacity style={{ flex: 1, paddingHorizontal: 20 }} onPress={editProfileClicked}>
-                                <View style={{ flex: 1, justifyContent: "center" }}>
-                                    <Text style={{ color: white_color, textAlign: "left", fontSize: 14, fontWeight: "bold" }}>{userName}</Text>
-                                </View>
-                            </TouchableOpacity>
+                            <View style={{ flex: 1, justifyContent: "center", paddingHorizontal: 20 }}>
+                                <Text style={{ color: white_color, textAlign: "left", fontSize: 14, fontWeight: "bold" }}>{`${authentication?.user?.first_name} ${authentication?.user?.last_name}`}</Text>
+                            </View>
                             <TouchableOpacity style={{ width: 130 }} onPress={logOutClicked}>
                                 <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                                     <Text style={{ color: blue_color, textAlign: "center", fontSize: 14, fontWeight: "bold" }}>Log me out</Text>

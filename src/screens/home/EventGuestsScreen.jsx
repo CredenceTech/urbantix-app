@@ -14,7 +14,6 @@ import {
     TextInput,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import EncryptedStorage from 'react-native-encrypted-storage';
 import { useNavigation } from '@react-navigation/native';
 import { background_color, gray_color, primary_color, white_color, black_color } from "../../constants/custome_colors";
 import { custome_screenContainer, custome_buttons, custome_textfields } from "../../constants/custome_styles";
@@ -25,6 +24,8 @@ import Loader from "../../components/Loader";
 import { event_checkedin_list } from "../../constants/api_constants";
 import { getParamRequest } from "../../constants/api_manager";
 import { useRoute } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
+import { removeUser } from "../../state/slices/authenticationSlice";
 
 interface Prop {
     navigation: any;
@@ -33,7 +34,7 @@ interface Prop {
 const EventGuestsScreen: React.FC<Prop> = ({ }) => {
 
 
-
+    const dispatch = useDispatch();
     const safeAreaInsets = useSafeAreaInsets();
     const navigation = useNavigation();
     const route = useRoute()
@@ -114,19 +115,11 @@ const EventGuestsScreen: React.FC<Prop> = ({ }) => {
     }
 
     const userLogout = () => {
-        removeUserSession();
         navigation.navigate('LoginLanding');
-
+        dispatch(removeUser())
     }
 
-    async function removeUserSession() {
-        try {
-            await EncryptedStorage.removeItem("user_session");
-            // Congrats! You've just removed your first value!
-        } catch (error) {
-            // There was an error on the native side
-        }
-    }
+
 
     return (
         <View style={custome_screenContainer.view_container}>

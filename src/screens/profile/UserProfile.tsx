@@ -12,7 +12,6 @@ import {
     Alert,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import EncryptedStorage from 'react-native-encrypted-storage';
 import { useNavigation } from '@react-navigation/native';
 import { background_color, gray_color, primary_color, white_color, black_color, blue_color } from "../../constants/custome_colors";
 import { custome_screenContainer } from "../../constants/custome_styles";
@@ -20,54 +19,22 @@ import { custome_screenContainer } from "../../constants/custome_styles";
 import Loader from "../../components/Loader";
 import { useRoute } from "@react-navigation/native";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import { useDispatch, useSelector } from "react-redux";
+import { removeUser } from "../../state/slices/authenticationSlice";
 
 interface Prop {
     navigation: any;
 }
 
 const UserProfile: React.FC<Prop> = ({ }) => {
-
+    const authentication = useSelector((state) => state.authentication)
     const safeAreaInsets = useSafeAreaInsets();
     const navigation = useNavigation();
     const route = useRoute()
-
+    const dispatch = useDispatch();
     //NAVIGATION PARAMS
     //SCREEN PARAMS
     const [isLoading, setLoading] = useState(false);
-
-    const [userName, setUserName] = useState('-');
-
-    useEffect(() => {
-        getUserName();
-    }, [])
-
-    const getUserName = async () => {
-        var userName = '';
-
-        try {
-            const session = await EncryptedStorage.getItem("user_session");
-            if (session !== undefined) {
-                let userObj = JSON.parse(session);
-                if (userObj.user != null && userObj.user != undefined) {
-                    if (userObj.user.first_name != undefined && userObj.user.first_name != null) {
-                        userName = userObj.user.first_name;
-                    }
-                    if (userObj.user.last_name != undefined && userObj.user.last_name != null) {
-                        if (userName != '') {
-                            userName = userName + ' ' + userObj.user.last_name;
-                        }
-                        else {
-                            userName = userObj.user.last_name;
-                        }
-                    }
-                }
-            }
-        } catch (error) {
-            // There was an error on the native side
-        }
-
-        setUserName(userName);
-    }
 
     const aboutUsClicked = async () => {
         navigation.navigate('CommonWebView', { title: 'About Us', url: 'https://www.urbantixs.com/about-us' });
@@ -103,22 +70,12 @@ const UserProfile: React.FC<Prop> = ({ }) => {
     }
 
     const userLogout = async () => {
-        await GoogleSignin.signOut();
-        removeUserSession();
         navigation.navigate('LoginLanding');
-
+        dispatch(removeUser())
     }
 
-    async function removeUserSession() {
-        try {
-            await EncryptedStorage.removeItem("user_session");
-            // Congrats! You've just removed your first value!
-        } catch (error) {
-            // There was an error on the native side
-        }
-    }
 
-    const ElementComponent = ({title}) => {
+    const ElementComponent = ({ title }) => {
         return <View style={styles.element}>
             <Text style={styles.element_text}>{title}</Text>
             <Image
@@ -141,23 +98,23 @@ const UserProfile: React.FC<Prop> = ({ }) => {
                     <View style={styles.mainView}>
                         <View style={{ flex: 1, padding: 10 }}>
                             <TouchableOpacity onPress={aboutUsClicked}>
-                                <ElementComponent title="About Us"/>
+                                <ElementComponent title="About Us" />
                             </TouchableOpacity>
                             <TouchableOpacity onPress={contactUsClicked}>
-                                <ElementComponent title="Contact Us"/>
+                                <ElementComponent title="Contact Us" />
                             </TouchableOpacity>
                             <TouchableOpacity onPress={privacyPolicyClicked}>
-                                <ElementComponent title="Privacy Policy"/>
+                                <ElementComponent title="Privacy Policy" />
                             </TouchableOpacity>
                             <TouchableOpacity onPress={termsOfUseClicked}>
-                                <ElementComponent title="Terms of Use"/>
+                                <ElementComponent title="Terms of Use" />
                             </TouchableOpacity>
                         </View>
 
                         <View style={{ flexDirection: "row", height: 50 }}>
                             <TouchableOpacity style={{ flex: 1, paddingHorizontal: 20 }} onPress={editProfileClicked}>
                                 <View style={{ flex: 1, justifyContent: "center" }}>
-                                    <Text style={{ color: white_color, textAlign: "left", fontSize: 14, fontWeight: "bold" }}>{userName}</Text>
+                                    <Text style={{ color: white_color, textAlign: "left", fontSize: 14, fontWeight: "bold" }}>{`${authentication?.user?.first_name} ${authentication?.user?.last_name}`}</Text>
                                 </View>
                             </TouchableOpacity>
                             <TouchableOpacity style={{ width: 130 }} onPress={logOutClicked}>
