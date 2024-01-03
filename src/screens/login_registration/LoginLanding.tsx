@@ -33,6 +33,7 @@ import { custome_screenContainer } from "../../constants/custome_styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDispatch } from 'react-redux';
 import { saveUser } from '../../state/slices/authenticationSlice';
+import { BackHandler } from 'react-native';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -50,36 +51,95 @@ const App = () => {
     });
   }, []);
 
+  useEffect(() => {
+    const backAction = () => {
+      Alert.alert('Hold on!', 'Are you sure you want to exit?', [
+        {
+          text: 'Cancel',
+          onPress: () => null,
+          style: 'cancel',
+        },
+        { text: 'YES', onPress: () => BackHandler.exitApp() },
+      ]);
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
+  // async function signInWithGoogl() {
+  //   try {
+  //     await GoogleSignin.signOut();
+  //     await GoogleSignin.hasPlayServices();
+  //     const { user } = await GoogleSignin.signIn();
+  //     const params = {
+  //       email: user?.email,
+  //       first_name: user?.givenName,
+  //       last_name: user?.familyName,
+  //       image: user?.photo,
+  //       socialMediaId: user?.id,
+  //       socialMediaType: 'Google',
+  //     };
+
+  //     setProgressBar(true);
+
+  //     const result = await socialLogin(params);
+  //     console.log("first", result)
+  //     if (result?.success) {
+  //       const user = result?.data?.user;
+  //       if (user) {
+  //         dispatch(saveUser(user))
+  //         navigation.navigate('Home');
+  //       }
+  //       setProgressBar(false);
+  //     } else {
+  //       setProgressBar(false);
+  //       Alert.alert('Error', result?.message);
+  //     }
+  //   } catch (error) {
+  //     setProgressBar(false);
+  //   }
+  // }
+
   async function signInWithGoogle() {
     try {
       await GoogleSignin.signOut();
-      await GoogleSignin.hasPlayServices();
-      const { user } = await GoogleSignin.signIn();
-      const params = {
-        email: user?.email,
-        first_name: user?.givenName,
-        last_name: user?.familyName,
-        image: user?.photo,
-        socialMediaId: user?.id,
-        socialMediaType: 'Google',
-      };
-
+      const { idToken } = await GoogleSignin.signIn();
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
       setProgressBar(true);
+      let data = await auth().signInWithCredential(googleCredential);
+      if (data?.user != undefined && data?.user != null) {
+        const params = {
+          email: data?.additionalUserInfo?.profile?.email,
+          first_name: data?.additionalUserInfo?.profile?.given_name,
+          last_name: data?.additionalUserInfo?.profile?.family_name,
+          image: data?.additionalUserInfo?.profile?.picture,
+          socialMediaId: data.user.uid,
+          socialMediaType: 'Google',
+        };
 
-      const result = await socialLogin(params);
-      console.log("first", result)
-      if (result?.success) {
-        const user = result?.data?.user;
-        if (user) {
-          dispatch(saveUser(user))
+        const result = await socialLogin(params);
+
+        if (result?.success) {
+          const user = result?.data?.user;
+          if (user) {
+            dispatch(saveUser(user))
+            navigation.navigate('Home');
+          }
+          setProgressBar(false);
+        } else {
+          setProgressBar(false);
+          Alert.alert('Error', result?.message);
         }
-        setProgressBar(false);
-        navigation.navigate('Home');
       } else {
         setProgressBar(false);
-        Alert.alert('Error', result?.message);
       }
-    } catch (error) {
+    } catch (err) {
       setProgressBar(false);
     }
   }

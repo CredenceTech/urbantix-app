@@ -42,11 +42,14 @@ import { primary_color } from './src/constants/custome_colors';
 import HomePage from './src/screens/home/HomePage';
 import Orders from './src/screens/home/Orders';
 import QRScanner from './src/screens/QRCodeScanner';
+import { PersistGate } from 'redux-persist/integration/react';
+import persistStore from 'redux-persist/es/persistStore';
 
 const Stack = createNativeStackNavigator();
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
+  let persistor = persistStore(store);
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
@@ -58,6 +61,7 @@ function App() {
 
   return (
     <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
       <SafeAreaProvider>
         <NavigationContainer theme={MyTheme}  >
           <Stack.Navigator screenOptions={headerStyle} >
@@ -72,6 +76,7 @@ function App() {
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>
+      </PersistGate>
     </Provider>
   );
 }

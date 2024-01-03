@@ -10,8 +10,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from '@react-navigation/native';
 import { login_background_color } from "../../constants/custome_colors";
 const { height, width } = Dimensions.get('screen');
-
-import { store } from "../../state/store";
 import { Dimensions } from "react-native";
 import { useSelector } from "react-redux";
 
@@ -23,6 +21,8 @@ const SplashScreen: React.FC<Prop> = ({ }) => {
 
     const navigation = useNavigation();
     const authentication = useSelector((state) => state.authentication)
+
+    console.log(authentication, "Auth")
     useEffect(() => {
         //NAVIGATE AFTER 2 SECONDS
         setTimeout(() => {
