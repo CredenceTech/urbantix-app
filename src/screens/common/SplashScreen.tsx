@@ -43,7 +43,10 @@ const SplashScreen: React.FC<Prop> = ({ }) => {
             if (authentication !== null) {
                 // Congrats! You've just retrieved your first value!
                 if (authentication?.user != null && authentication?.user?.access_token != null) {
-                    navigation.navigate('Home');
+                    navigation.reset({
+                        index: 0,
+                        routes: [{ name: 'Home' }],
+                      });
                 }
                 else {
                     navigation.navigate('LoginLanding');

@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "949818663835-4ks2o6qkr4cumorvmofarrfji22qfadl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.urbantixs",
+            "certificate_hash": "cf4d7c917b003396b5af4d39811bfdea7c3f042a"
+          }
+        },
+        {
           "client_id": "949818663835-50upemu7i3l5cp2l2suultqi5ivtvfpj.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -22,7 +30,15 @@
           }
         },
         {
-          "client_id": "949818663835-ub92nmujib95qs3lpj0a9i2vnj9s87a9.apps.googleusercontent.com",
+          "client_id": "949818663835-9kaisblg7b58csr7imv2r9poo7srgq0d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.urbantixs",
+            "certificate_hash": "13514fc8673495819ef0269d93e4f6c7c03b7910"
+          }
+        },
+        {
+          "client_id": "949818663835-voprtlskm5o76gm62q9t38amr2t2v1bs.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.urbantixs",
@@ -47,10 +63,10 @@
               "client_type": 3
             },
             {
-              "client_id": "949818663835-c87hvmkdasf6q3dt8156k67un23ocr5s.apps.googleusercontent.com",
+              "client_id": "949818663835-1ejujos1bp9721c81opul1qr9rtfol68.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.credencetech.urbantixs"
+                "bundle_id": "com.urbantixs"
               }
             }
           ]

@@ -44,6 +44,7 @@ const App = () => {
     email: '',
     password: '',
   });
+
   useEffect(() => {
     GoogleSignin.configure({
       webClientId:
