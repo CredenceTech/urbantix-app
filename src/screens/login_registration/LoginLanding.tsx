@@ -370,13 +370,13 @@ const App = () => {
                   <Text style={[styles.title]}>Continue with Google</Text>
                 </TouchableOpacity>
               </View>
-              <View>
+              {/* <View>
                 <TouchableOpacity
                   style={[styles.buttonItem, { paddingVertical: height * 0.016 }]}
                   onPress={onFacebookButtonPress}>
                   <Text style={[styles.title]}>Continue with Facebook</Text>
                 </TouchableOpacity>
-              </View>
+              </View> */}
             </View>
           </View>
         </ScrollView>

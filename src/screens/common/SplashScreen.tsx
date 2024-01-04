@@ -22,7 +22,6 @@ const SplashScreen: React.FC<Prop> = ({ }) => {
     const navigation = useNavigation();
     const authentication = useSelector((state) => state.authentication)
 
-    console.log(authentication, "Auth")
     useEffect(() => {
         //NAVIGATE AFTER 2 SECONDS
         setTimeout(() => {
