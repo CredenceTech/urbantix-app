@@ -52,26 +52,26 @@ const App = () => {
     });
   }, []);
 
-  useEffect(() => {
-    const backAction = () => {
-      Alert.alert('Hold on!', 'Are you sure you want to exit?', [
-        {
-          text: 'Cancel',
-          onPress: () => null,
-          style: 'cancel',
-        },
-        { text: 'YES', onPress: () => BackHandler.exitApp() },
-      ]);
-      return true;
-    };
+  // useEffect(() => {
+  //   const backAction = () => {
+  //     Alert.alert('Hold on!', 'Are you sure you want to exit?', [
+  //       {
+  //         text: 'Cancel',
+  //         onPress: () => null,
+  //         style: 'cancel',
+  //       },
+  //       { text: 'YES', onPress: () => BackHandler.exitApp() },
+  //     ]);
+  //     return true;
+  //   };
 
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
+  //   const backHandler = BackHandler.addEventListener(
+  //     'hardwareBackPress',
+  //     backAction,
+  //   );
 
-    return () => backHandler.remove();
-  }, []);
+  //   return () => backHandler.remove();
+  // }, []);
 
   // async function signInWithGoogl() {
   //   try {
@@ -130,7 +130,7 @@ const App = () => {
           const user = result?.data?.user;
           if (user) {
             dispatch(saveUser(user))
-            navigation.navigate('Home');
+            navigation.replace('Home');
           }
           setProgressBar(false);
         } else {
@@ -174,7 +174,7 @@ const App = () => {
             dispatch(saveUser(user))
           }
           setProgressBar(false);
-          navigation.navigate('Home');
+          navigation.replace('Home');
         } else {
           setProgressBar(false);
           Alert.alert('Error', result?.message);
@@ -227,7 +227,7 @@ const App = () => {
           dispatch(saveUser(user))
         }
         setProgressBar(false);
-        navigation.navigate('Home');
+        navigation.replace('Home');
       } else {
         setProgressBar(false);
         Alert.alert('Error', result?.message);
@@ -271,7 +271,7 @@ const App = () => {
         if (user) {
           dispatch(saveUser(user))
         }
-        navigation.navigate('Home');
+        navigation.replace('Home');
       }
     }
     setProgressBar(false);

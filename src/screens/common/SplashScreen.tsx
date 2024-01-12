@@ -21,18 +21,18 @@ const SplashScreen: React.FC<Prop> = ({ }) => {
     const authentication = useSelector((state) => state.authentication)
     const [isFirstLaunch, setIsFirstLaunch] = useState(true)
 
-      const getfirstLaunchData = async () => {
+    const getfirstLaunchData = async () => {
         try {
-          const value = await AsyncStorage.getItem('alreadylaunch');
-          if (value !== null) {
-            retrieveUserSession();
-          } else {
-            navigation.navigate("OnBoardingScreen")
-          }
+            const value = await AsyncStorage.getItem('alreadylaunch');
+            if (value !== null) {
+                retrieveUserSession();
+            } else {
+                navigation.replace("OnBoardingScreen")
+            }
         } catch (e) {
-          // error reading value
+            // error reading value
         }
-      };
+    };
 
     useEffect(() => {
         setTimeout(() => {
@@ -47,18 +47,18 @@ const SplashScreen: React.FC<Prop> = ({ }) => {
                     navigation.reset({
                         index: 0,
                         routes: [{ name: 'Home' }],
-                      });
+                    });
                 }
                 else {
-                    navigation.navigate('LoginLanding');
+                    navigation.replace('LoginLanding');
                 }
             }
             else {
-                navigation.navigate('LoginLanding');
+                navigation.replace('LoginLanding');
             }
         } catch (error) {
             // There was an error on the native side
-            navigation.navigate('LoginLanding');
+            navigation.replace('LoginLanding');
         }
     }
 

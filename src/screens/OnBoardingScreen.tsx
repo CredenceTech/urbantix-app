@@ -21,27 +21,27 @@ const OnBoardingScreen = () => {
             pages={[
                 {
                     backgroundColor: 'green',
-                    image: <Image style={{ height: height, width: width, objectFit: 'fill', }} source={require('../assets/images/slide-4.jpg')} />,
-                    title: '',
-                    subtitle: '',
+                    image: <Image style={{ height: "100%", width: "100%", objectFit: 'fill', }} source={require('../assets/images/slide-4.jpg')} />,
+                    // title: '',
+                    // subtitle: '',
                 },
                 {
                     backgroundColor: 'green',
-                    image: <Image style={{ height: height, width: width, objectFit: 'fill', }} source={require('../assets/images/slide-1.jpg')} />,
-                    title: '',
-                    subtitle: '',
+                    image: <Image style={{ height: "100%", width: "100%", objectFit: 'fill', }} source={require('../assets/images/slide-1.jpg')} />,
+                    // title: '',
+                    // subtitle: '',
                 },
                 {
                     backgroundColor: 'green',
-                    image: <Image style={{ height: height, width: width, objectFit: 'fill', }} source={require('../assets/images/slide-3.jpg')} />,
-                    title: '',
-                    subtitle: '',
+                    image: <Image style={{ height: "100%", width: "100%", objectFit: 'fill', }} source={require('../assets/images/slide-3.jpg')} />,
+                    // title: '',
+                    // subtitle: '',
                 },
                 {
                     backgroundColor: 'green',
-                    image: <Image style={{ height: height, width: width, objectFit: 'fill', }} source={require('../assets/images/slide-2.jpg')} />,
-                    title: '',
-                    subtitle: '',
+                    image: <Image style={{ height: "100%", width: "100%", objectFit: 'fill', }} source={require('../assets/images/slide-2.jpg')} />,
+                    // title: '',
+                    // subtitle: '',
                 },
             ]}
         />
