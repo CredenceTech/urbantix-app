@@ -94,8 +94,8 @@ android {
         applicationId "com.urbantixs"
         minSdkVersion 28     
         targetSdkVersion 33   
-        versionCode 9
-        versionName "9"
+        versionCode 11
+        versionName "11"
         missingDimensionStrategy 'react-native-camera', 'general'
          signingConfig signingConfigs.release
     }
