@@ -21,39 +21,18 @@ import { Settings } from 'react-native-fbsdk-next';
 import CommonWebView from './src/screens/profile/CommonWebView';
 //SCREENS END
 
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
-
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 import { primary_color } from './src/constants/custome_colors';
 import HomePage from './src/screens/home/HomePage';
 import Orders from './src/screens/home/Orders';
 import QRScanner from './src/screens/QRCodeScanner';
 import { PersistGate } from 'redux-persist/integration/react';
 import persistStore from 'redux-persist/es/persistStore';
+import OnBoardingScreen from './src/screens/OnBoardingScreen';
 
 const Stack = createNativeStackNavigator();
 
 function App() {
-  const isDarkMode = useColorScheme() === 'dark';
   let persistor = persistStore(store);
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
 
   useEffect(() => {
     Settings.setAdvertiserTrackingEnabled(true);
@@ -62,20 +41,21 @@ function App() {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-      <SafeAreaProvider>
-        <NavigationContainer theme={MyTheme}  >
-          <Stack.Navigator screenOptions={headerStyle} >
-            <Stack.Screen name="SplashScreen" component={SplashScreen} />
-            <Stack.Screen name="HomeScreen" component={HomeScreen} />
-            <Stack.Screen name="LoginLanding" component={LoginLanding} />
-            <Stack.Screen name="EventGuestsScreen" component={EventGuestsScreen} />
-            <Stack.Screen name="Home" component={HomePage} />
-            <Stack.Screen name="Orders" component={Orders} />
-            <Stack.Screen name="CheckIn" component={QRScanner} />
-            <Stack.Screen name="CommonWebView" component={CommonWebView} />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </SafeAreaProvider>
+        <SafeAreaProvider>
+          <NavigationContainer theme={MyTheme}  >
+            <Stack.Navigator screenOptions={headerStyle} >
+              <Stack.Screen name="SplashScreen" component={SplashScreen} />
+              <Stack.Screen name="OnBoardingScreen" options={{ headerShown: false }} component={OnBoardingScreen} />
+              <Stack.Screen name="HomeScreen" component={HomeScreen} />
+              <Stack.Screen name="LoginLanding" component={LoginLanding} />
+              <Stack.Screen name="EventGuestsScreen" component={EventGuestsScreen} />
+              <Stack.Screen name="Home" component={HomePage} />
+              <Stack.Screen name="Orders" component={Orders} />
+              <Stack.Screen name="CheckIn" component={QRScanner} />
+              <Stack.Screen name="CommonWebView" component={CommonWebView} />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </SafeAreaProvider>
       </PersistGate>
     </Provider>
   );

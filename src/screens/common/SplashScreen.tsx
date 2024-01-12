@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
     View,
-    Text,
     Image,
-    StatusBar,
     StyleSheet,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -21,27 +19,30 @@ const SplashScreen: React.FC<Prop> = ({ }) => {
 
     const navigation = useNavigation();
     const authentication = useSelector((state) => state.authentication)
+    const [isFirstLaunch, setIsFirstLaunch] = useState(true)
+
+      const getfirstLaunchData = async () => {
+        try {
+          const value = await AsyncStorage.getItem('alreadylaunch');
+          if (value !== null) {
+            retrieveUserSession();
+          } else {
+            navigation.navigate("OnBoardingScreen")
+          }
+        } catch (e) {
+          // error reading value
+        }
+      };
 
     useEffect(() => {
-        //NAVIGATE AFTER 2 SECONDS
         setTimeout(() => {
-
-            retrieveUserSession();
-
-            // const persistValue = store.getState().authentication;
-            // if (persistValue != null && persistValue.user != null) {
-            //     navigation.navigate('HomeScreen');
-            // }
-            // else {
-            //     navigation.navigate('LoginScreen');
-            // }
+            getfirstLaunchData();
         }, 2000);
     }, [])
 
     async function retrieveUserSession() {
         try {
             if (authentication !== null) {
-                // Congrats! You've just retrieved your first value!
                 if (authentication?.user != null && authentication?.user?.access_token != null) {
                     navigation.reset({
                         index: 0,
@@ -63,7 +64,6 @@ const SplashScreen: React.FC<Prop> = ({ }) => {
 
     return (
         <View style={styles.MainView}>
-            {/* <StatusBar backgroundColor="#F5F5F5" barStyle="dark-content" /> */}
             <Image
                 source={require("../../assets/images/splash.jpg")}
                 style={styles.logo}
