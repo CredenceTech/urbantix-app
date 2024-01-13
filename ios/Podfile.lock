@@ -537,7 +537,8 @@ PODS:
     - React-Core
   - react-native-safe-area-context (4.8.0):
     - React-Core
-  - react-native-webview (13.6.3):
+  - react-native-webview (13.6.4):
+    - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - React-NativeModulesApple (0.72.7):
     - hermes-engine
@@ -971,7 +972,7 @@ SPEC CHECKSUMS:
   react-native-fbsdk-next: 9c40664b1501be29572795c2e4c8e347f39f556f
   react-native-image-picker: 5e076db26cd81660cfb6db5bcf517cfa12054d45
   react-native-safe-area-context: d1c8161a1e9560f7066e8926a7d825eb57c5dab5
-  react-native-webview: 88293a0f23eca8465c0433c023ec632930e644d0
+  react-native-webview: 107961c73db53d66549c867a3b64eaa20d34c41f
   React-NativeModulesApple: b6868ee904013a7923128892ee4a032498a1024a
   React-perflogger: 31ea61077185eb1428baf60c0db6e2886f141a5a
   React-RCTActionSheet: 392090a3abc8992eb269ef0eaa561750588fc39d
