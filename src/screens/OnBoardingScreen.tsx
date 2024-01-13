@@ -87,7 +87,7 @@ const Onboarding = ({ navigation }) => {
             </TouchableOpacity>
 
             {/* Sign In button */}
-            <TouchableOpacity style={[styles.signInButton, {bottom: insets.bottom+60}]} onPress={onSkip}>
+            <TouchableOpacity style={[styles.signInButton, {bottom: insets.bottom+55}]} onPress={onSkip}>
                 <Text style={styles.signInButtonText}>Log In</Text>
             </TouchableOpacity>
 
