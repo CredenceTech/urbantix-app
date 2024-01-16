@@ -8,6 +8,7 @@ import Swiper from 'react-native-swiper';
 const { width, height } = Dimensions.get('window')
 import Autolink from 'react-native-autolink';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { custome_screenContainer } from '../constants/custome_styles';
 
 
 const Onboarding = ({ navigation }) => {
@@ -24,6 +25,7 @@ const Onboarding = ({ navigation }) => {
     };
 
     return (
+        <View style={custome_screenContainer.view_container}>
         <SafeAreaView style={styles.container}>
             <StatusBar barStyle="light-content" />
             {/* <Image source={require('.../assets/images/slide-1.jpg')} style={styles.imgBackground} /> */}
@@ -108,6 +110,7 @@ const Onboarding = ({ navigation }) => {
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
+        </View>
     );
 };
 
