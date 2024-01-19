@@ -130,7 +130,11 @@ const App = () => {
           const user = result?.data?.user;
           if (user) {
             dispatch(saveUser(user))
-            navigation.replace('Home');
+            setProgressBar(false);
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Home' }],
+            });
           }
           setProgressBar(false);
         } else {
@@ -174,7 +178,11 @@ const App = () => {
             dispatch(saveUser(user))
           }
           setProgressBar(false);
-          navigation.replace('Home');
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Home' }],
+          });
+          // navigation.replace('Home');
         } else {
           setProgressBar(false);
           Alert.alert('Error', result?.message);
@@ -271,7 +279,11 @@ const App = () => {
         if (user) {
           dispatch(saveUser(user))
         }
-        navigation.replace('Home');
+        setProgressBar(false);
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Home' }],
+        });
       }
     }
     setProgressBar(false);
