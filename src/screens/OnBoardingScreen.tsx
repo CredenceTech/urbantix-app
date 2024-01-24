@@ -14,7 +14,6 @@ import { custome_screenContainer } from '../constants/custome_styles';
 const Onboarding = ({ navigation }) => {
     const insets = useSafeAreaInsets();
 
-
     const onSkip = () => {
         navigation.replace("LoginLanding")
         AsyncStorage.setItem("alreadylaunch", "true")

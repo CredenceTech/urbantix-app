@@ -26,6 +26,7 @@ import { postParamRequest } from "../../constants/api_manager";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { useDispatch, useSelector } from "react-redux";
 import { removeUser } from "../../state/slices/authenticationSlice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 interface Prop {
@@ -150,7 +151,8 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
     }
 
     const userLogout = async () => {
-        navigation.navigate('LoginLanding');
+        navigation.navigate('OnBoardingScreen');
+        await AsyncStorage.removeItem('alreadylaunch');
         dispatch(removeUser())
     }
 

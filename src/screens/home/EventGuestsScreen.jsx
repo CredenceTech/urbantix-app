@@ -114,8 +114,9 @@ const EventGuestsScreen: React.FC<Prop> = ({ }) => {
         ]);
     }
 
-    const userLogout = () => {
-        navigation.navigate('LoginLanding');
+    const userLogout = async () => {
+        navigation.navigate('OnBoardingScreen');
+        await AsyncStorage.removeItem('alreadylaunch');
         dispatch(removeUser())
     }
 

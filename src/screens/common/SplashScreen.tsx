@@ -19,7 +19,6 @@ const SplashScreen: React.FC<Prop> = ({ }) => {
 
     const navigation = useNavigation();
     const authentication = useSelector((state) => state.authentication)
-    const [isFirstLaunch, setIsFirstLaunch] = useState(true)
 
     const getfirstLaunchData = async () => {
         try {
@@ -50,15 +49,15 @@ const SplashScreen: React.FC<Prop> = ({ }) => {
                     });
                 }
                 else {
-                    navigation.replace('LoginLanding');
+                    navigation.replace('OnBoardingScreen');
                 }
             }
             else {
-                navigation.replace('LoginLanding');
+                navigation.replace('OnBoardingScreen');
             }
         } catch (error) {
             // There was an error on the native side
-            navigation.replace('LoginLanding');
+            navigation.replace('OnBoardingScreen');
         }
     }
 
