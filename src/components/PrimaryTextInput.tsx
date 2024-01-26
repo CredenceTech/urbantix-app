@@ -1,4 +1,4 @@
-import React, { useState, Component } from "react";
+import React, { useState } from "react";
 import {
     View,
     Text,
@@ -18,7 +18,7 @@ const PrimaryTextInput = ({ value, onChangeText, placeholder }) => {
             placeholderTextColor='#808080'
             value={value}
             onChangeText={onChangeText} />
-      );
+    );
 };
 
 const styles = StyleSheet.create({

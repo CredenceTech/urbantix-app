@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {
     StyleSheet,
     View,
@@ -8,67 +8,48 @@ import {
 } from 'react-native';
 import { primary_color, white_color } from '../constants/custome_colors';
 
-class NavigationBar extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            isShowBack: this.props.isShowBack,
-            backClicked: this.props.backClicked,
-            isShowTitle: this.props.isShowTitle,
-            screenTitle: this.props.screenTitle,
-            isShowLogout: this.props.isShowLogout,
-            logOutClicked: this.props.logOutClicked
-        }
+const NavigationBar = ({
+    isShowBack = false,
+    backClicked,
+    isShowTitle = true,
+    screenTitle = "",
+    isShowLogout = false,
+    logOutClicked }) => {
+
+    //BackButton
+    let BackButton;
+    if (isShowBack) {
+        BackButton =
+            <TouchableOpacity style={styles.back_button_view} onPress={backClicked}>
+                <Image
+                    source={require("../assets/images/back.png")}
+                    style={styles.back_button_image}
+                />
+            </TouchableOpacity>;
     }
 
-    static getDerivedStateFromProps(nextProps) {
-        return {
-            isShowBack: nextProps.isShowBack,
-            backClicked: nextProps.backClicked,
-            isShowTitle: nextProps.isShowTitle,
-            screenTitle: nextProps.screenTitle,
-            isShowLogout: nextProps.isShowLogout,
-            logOutClicked: nextProps.logOutClicked
-        };
+    //BackButton
+    let ScreenTitle;
+    if (isShowTitle) {
+        ScreenTitle = <Text style={styles.navigationTitle}>{screenTitle}</Text>;
     }
 
-    render() {
-        //BackButton
-        let BackButton;
-        if (this.state.isShowBack) {
-            BackButton =
-                <TouchableOpacity style={styles.back_button_view} onPress={this.state.backClicked}>
-                    <Image
-                        source={require("../assets/images/back.png")}
-                        style={styles.back_button_image}
-                    />
-                </TouchableOpacity>;
-        }
-
-        //BackButton
-        let ScreenTitle;
-        if (this.state.isShowTitle) {
-            ScreenTitle = <Text style={styles.navigationTitle}>{this.state.screenTitle}</Text>;
-        }
-
-        //LogoutButton
-        let LogoutButton;
-        if (this.state.isShowLogout) {
-            LogoutButton =
-                <TouchableOpacity style={styles.logout_button_view} onPress={this.state.logOutClicked}>
-                    <Text style={styles.logout_button_title}>Logout</Text>
-                </TouchableOpacity>;
-        }
-
-        return (
-            <View style={styles.navigationBackground}>
-                {BackButton}
-                {ScreenTitle}
-                {LogoutButton}
-            </View>
-        )
+    //LogoutButton
+    let LogoutButton;
+    if (isShowLogout) {
+        LogoutButton =
+            <TouchableOpacity style={styles.logout_button_view} onPress={logOutClicked}>
+                <Text style={styles.logout_button_title}>Logout</Text>
+            </TouchableOpacity>;
     }
-}
+    return (
+        <View style={styles.navigationBackground}>
+            {BackButton}
+            {ScreenTitle}
+            {LogoutButton}
+        </View>
+    );
+};
 
 const styles = StyleSheet.create({
     navigationBackground: {
@@ -117,4 +98,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default NavigationBar
+export default NavigationBar;
