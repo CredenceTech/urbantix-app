@@ -9,40 +9,17 @@ import {
 import { black_color, white_color, green_color } from "../constants/custome_colors";
 import { custome_textfields } from "../constants/custome_styles";
 
-class PrimaryTextInput extends Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            placeholderText: this.props.placeholderText,
-            value: this.props.value,
-            setInputValue: this.props.setInputValue,
-        }
-    }
-
-    static getDerivedStateFromProps(nextProps) {
-        return {
-            placeholderText: nextProps.placeholderText,
-            value: nextProps.value,
-            setInputValue: nextProps.setInputValue,
-        };
-    }
-
-    render() {
-
-        return (
-            <TextInput
+const PrimaryTextInput = ({ value, onChangeText, placeholder }) => {
+    return (
+        <TextInput
             style={styles.primary_textfield}
             keyboardType="email-address"
-            placeholder="Email"
+            placeholder={placeholder}
             placeholderTextColor='#808080'
-            onChangeText={(text) =>
-                this.state.setInputValue(text)
-            }
-            value={this.state.value} />
-        )
-    }
-}
+            value={value}
+            onChangeText={onChangeText} />
+      );
+};
 
 const styles = StyleSheet.create({
     primary_textfield: {
@@ -58,4 +35,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default PrimaryTextInput
+export default PrimaryTextInput;
