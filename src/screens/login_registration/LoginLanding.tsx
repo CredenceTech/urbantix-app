@@ -20,7 +20,7 @@ import {
 import { Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { socialLogin } from '../../constants/services';
+import { logins, socialLogin } from '../../constants/services';
 import appleAuth from '@invertase/react-native-apple-authentication';
 import ProgressDialogView from '../../components/PreogressBar';
 import { AccessToken, LoginManager } from 'react-native-fbsdk-next';
@@ -266,25 +266,18 @@ const App = () => {
       'email': inputValue.email,
       'password': inputValue.password,
     })
-    const [success, message, data, error] = await postParamRequest(login, params);
-    if (error != null) {
-      Alert.alert("Error", error);
-    }
-    else if (success == false || data == null) {
-      Alert.alert("Failed", message);
-    }
-    else {
-      if (data && data !== undefined && data !== null) {
-        const user = data.user;
-        if (user) {
-          dispatch(saveUser(user))
-        }
-        setProgressBar(false);
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Home' }],
-        });
+    const data = await logins(params);
+    console.log(data, "Data")
+    if (data && data !== undefined && data !== null) {
+      const user = data.user;
+      if (user) {
+        dispatch(saveUser(user))
       }
+      setProgressBar(false);
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Home' }],
+      });
     }
     setProgressBar(false);
   };

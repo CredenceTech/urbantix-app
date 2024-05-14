@@ -1,7 +1,8 @@
-import React from "react";
 import axios from "axios";
 import { store } from "../state/store";
 import { baseURL, login } from "../constants/api_constants";
+import { navigate } from "./root_navigation";
+import { removeUser } from "../state/slices/authenticationSlice";
 
 const api = axios.create({
   baseURL: baseURL, // Replace with your API base URL
@@ -13,13 +14,27 @@ api.interceptors.request.use(
   async config => {
     const authenticationUser = store.getState().authentication;
 
-    config.headers['Accept'] = 'application/json'; // Replace with your authorization logic
-    config.headers['Content-Type'] = 'application/json'; // Replace with your authorization logic
-    config.headers.Authorization = 'Bearer ' + authenticationUser?.user?.access_token; // Replace with your authorization logic
+    config.headers['Accept'] = 'application/json'; 
+    config.headers['Content-Type'] = 'application/json';
+    config.headers.Authorization = 'Bearer ' + authenticationUser?.user?.access_token; 
     return config;
   },
   error => {
     // Handle request error
+    console.log("Error",  error)
+    return Promise.reject(error);
+  }
+);
+
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      store.dispatch(removeUser());
+      navigate('LoginLanding');
+    }
     return Promise.reject(error);
   }
 );

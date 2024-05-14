@@ -27,6 +27,7 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { useDispatch, useSelector } from "react-redux";
 import { removeUser } from "../../state/slices/authenticationSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getEvent } from "../../constants/services";
 
 
 interface Prop {
@@ -48,6 +49,7 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
 
     useEffect(() => {
         getEvents();
+        console.log("Hello")
     }, [status, currentpage])
 
     useEffect(() => {
@@ -105,28 +107,18 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
             'userId': authentication?.user?.id,
             'status': status
         })
-        const [success, message, data, error] = await postParamRequest(events_list, params);
-        if (error != null) {
-            Alert.alert("Error", error);
-            setArrayEvent([]);
-        }
-        else if (success == false || data == null) {
-            setArrayEvent([]);
-            Alert.alert("Failed", message);
-        }
-        else {
-            if (data && data !== undefined && data !== null && data.events !== undefined && data.events !== null) {
-                setTotalEvents(data.count);
-                if (currentpage == 1) {
-                    setArrayEvent(data.events);
-                }
-                else {
-                    setArrayEvent(...arrayEvent, data.events);
-                }
+        const data = await getEvent(params);
+        if (data && data !== undefined && data !== null) {
+            setTotalEvents(data.count);
+            if (currentpage == 1) {
+                setArrayEvent(data.events);
             }
             else {
-                setArrayEvent([]);
+                setArrayEvent(...arrayEvent, data.events);
             }
+        }
+        else {
+            setArrayEvent([]);
         }
         setLoading(false);
     }
@@ -209,7 +201,7 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
                             </TouchableOpacity> */}
                         </View>
                         {
-                            arrayEvent.length > 0 ?
+                            arrayEvent?.length > 0 ?
                                 <FlatList
                                     data={arrayEvent}
                                     renderItem={({ item }) => <EventComponent objEvent={item} actionOnRow={() => actionOnRow(item)} />}

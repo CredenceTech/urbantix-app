@@ -29,3 +29,33 @@ export async function socialLogin(params) {
   }
   return null;
 }
+
+export async function logins(params) {
+  try {
+    const result = await api.post(`/login`,params).then((response) => {
+      return response.data;
+    }).catch((error) => {
+      return error.response.data;
+    })
+    if (result != null) {
+      return result;
+    }
+  } catch (err) {
+  }
+  return null;
+}
+
+export async function getEvent(params) {
+  try {
+    const result = await api.post(`/events/list`,params).then((response) => {
+      return response.data;
+    }).catch((error) => {
+      return error.response.data;
+    })
+    if (result != null) {
+      return result;
+    }
+  } catch (err) {
+  }
+  return null;
+}

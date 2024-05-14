@@ -28,6 +28,7 @@ import QRScanner from './src/screens/QRCodeScanner';
 import { PersistGate } from 'redux-persist/integration/react';
 import persistStore from 'redux-persist/es/persistStore';
 import OnBoardingScreen from './src/screens/OnBoardingScreen';
+import { navigationRef } from './src/constants/root_navigation';
 
 const Stack = createNativeStackNavigator();
 
@@ -42,7 +43,7 @@ function App() {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <SafeAreaProvider>
-          <NavigationContainer theme={MyTheme}  >
+          <NavigationContainer theme={MyTheme} ref={navigationRef} >
             <Stack.Navigator screenOptions={headerStyle} >
               <Stack.Screen name="SplashScreen" component={SplashScreen} />
               <Stack.Screen name="OnBoardingScreen" options={{ headerShown: false }} component={OnBoardingScreen} />
