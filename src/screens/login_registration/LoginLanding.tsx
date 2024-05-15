@@ -266,18 +266,21 @@ const App = () => {
       'email': inputValue.email,
       'password': inputValue.password,
     })
-    const data = await logins(params);
-    console.log(data, "Data")
-    if (data && data !== undefined && data !== null) {
-      const user = data.user;
-      if (user) {
-        dispatch(saveUser(user))
+    const [success, message, data, error] = await postParamRequest(login, params);
+    if (error != null) {
+      Alert.alert("Error", error);
+    }
+    else if (success == false || data == null) {
+      Alert.alert("Failed", message);
+    }
+    else {
+      if (data && data !== undefined && data !== null) {
+        const user = data.user;
+        if (user) {
+          dispatch(saveUser(user))
+        }
+        navigation.replace('Home');
       }
-      setProgressBar(false);
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Home' }],
-      });
     }
     setProgressBar(false);
   };
