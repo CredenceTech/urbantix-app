@@ -279,7 +279,11 @@ const App = () => {
         if (user) {
           dispatch(saveUser(user))
         }
-        navigation.replace('Home');
+        setProgressBar(false);
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Home' }],
+        });
       }
     }
     setProgressBar(false);

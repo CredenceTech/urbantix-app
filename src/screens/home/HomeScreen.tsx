@@ -49,7 +49,6 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
 
     useEffect(() => {
         getEvents();
-        console.log("Hello")
     }, [status, currentpage])
 
     useEffect(() => {
