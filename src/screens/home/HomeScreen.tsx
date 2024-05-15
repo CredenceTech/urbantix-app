@@ -107,18 +107,28 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
             'userId': authentication?.user?.id,
             'status': status
         })
-        const data = await getEvent(params);
-        if (data && data !== undefined && data !== null) {
-            setTotalEvents(data.count);
-            if (currentpage == 1) {
-                setArrayEvent(data.events);
-            }
-            else {
-                setArrayEvent(...arrayEvent, data.events);
-            }
+        const [success, message, data, error] = await postParamRequest(events_list, params);
+        if (error != null) {
+            Alert.alert("Error", error);
+            setArrayEvent([]);
+        }
+        else if (success == false || data == null) {
+            setArrayEvent([]);
+            Alert.alert("Failed", message);
         }
         else {
-            setArrayEvent([]);
+            if (data && data !== undefined && data !== null && data.events !== undefined && data.events !== null) {
+                setTotalEvents(data.count);
+                if (currentpage == 1) {
+                    setArrayEvent(data.events);
+                }
+                else {
+                    setArrayEvent(...arrayEvent, data.events);
+                }
+            }
+            else {
+                setArrayEvent([]);
+            }
         }
         setLoading(false);
     }
