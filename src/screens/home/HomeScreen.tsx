@@ -122,7 +122,7 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
                     setArrayEvent(data.events);
                 }
                 else {
-                    setArrayEvent(...arrayEvent, data.events);
+                    setArrayEvent(prevHistory => [...prevHistory, ...(data.events || [])]);
                 }
             }
             else {
