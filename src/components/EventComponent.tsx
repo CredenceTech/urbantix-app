@@ -37,7 +37,10 @@ class EventComponent extends Component {
                 <View style={styles.main_view}>
                     <Text style={styles.event_title}>{this.state.objEvent.name}</Text>
                     <Text style={styles.event_address}>{this.state.objEvent.place}</Text>
-                    <Text style={styles.event_datetime}>{moment(moment(this.state.objEvent.start_date, 'YYYY-MM-DD HH:mm:ss.ZZZ')).format('dddd MMMM D, YYYY at hh:mm a')}</Text>
+                    <Text style={styles.event_datetime}>
+                        {/* {moment(this.state.objEvent.start_date, 'YYYY-MM-DD HH:mm:ss').format('dddd MMMM D, YYYY at HH:mm')} */}
+                        {moment(this.state.objEvent.start_date).format('dddd MMMM D, YYYY hh:mm a')}
+                    </Text>
                     <View style={{ flexDirection: "row", marginTop: 10, marginBottom: 5 }}>
                         <Text style={styles.event_datetime}>{this.state.objEvent.total_sold}/{this.state.objEvent.total_tickets}</Text>
                         <View style={{ flex: 1 }} />
