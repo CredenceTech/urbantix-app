@@ -128,8 +128,8 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
             // Alert.alert("Failed", message);
         }
         else {
-            setTotalEvents(data.count);
             if (data && data.events) {
+            setTotalEvents(data.count);
                 if (currentpage === 1) {
                     // const uniqueEvents = data.events.filter(newEvent =>
                     //     !arrayEvent.some(existingEvent => existingEvent.id === newEvent.id)
