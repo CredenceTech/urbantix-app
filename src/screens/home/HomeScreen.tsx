@@ -43,7 +43,7 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
     const [search, setSearch] = useState('');
     const [status, setStatus] = useState('Upcoming'); // Past,Upcoming,Draft
     const [arrayEvent, setArrayEvent] = useState([]);
-    const [totalEvents, setTotalEvents] = useState(1);
+    const [totalEvents, setTotalEvents] = useState(0);
     const [currentpage, setCurrentpage] = useState(1);
 
 
@@ -51,20 +51,30 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
         getEvents();
     }, [status, currentpage])
 
-    useEffect(() => {
-        getEvents(false);
-    }, [search])
+    // useEffect(() => {
+    //     const intervale = setTimeout(() => {
+    //         // setArrayEvent([]);
+    //         // setTotalEvents(0);
+    //         setCurrentpage(1);
+    //         // getEvents(false);
+    //     }, 1500)
+    //     return () => clearTimeout(intervale);
+
+    // }, [search]);
+
+
+    console.log("totalEvents < arrayEvent?.length", totalEvents, arrayEvent?.length, totalEvents > arrayEvent?.length)
 
     const nextPage = async () => {
-        if (totalEvents > arrayEvent.length) {
+        if (totalEvents > arrayEvent?.length && currentpage < Math.ceil(totalEvents / 4)) {
             setCurrentpage(currentpage + 1)
-            getEvents();
+            await getEvents();
         }
     }
 
     const searchValueChanged = async (text: string = '') => {
         setSearch(text);
-        setCurrentpage(1);
+        // setArrayEvent([]);
     }
 
     const upcomingClicked = () => {
@@ -106,23 +116,34 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
             'userId': authentication?.user?.id,
             'status': status
         })
+        console.log("paramsparamsparams", params)
+        console.log("truefirst")
         const [success, message, data, error] = await postParamRequest(events_list, params);
         if (error != null) {
             Alert.alert("Error", error);
             setArrayEvent([]);
         }
         else if (success == false || data == null) {
-            setArrayEvent([]);
-            Alert.alert("Failed", message);
+            // setArrayEvent([]);
+            // Alert.alert("Failed", message);
         }
         else {
-            if (data && data !== undefined && data !== null && data.events !== undefined && data.events !== null) {
-                setTotalEvents(data.count);
-                if (currentpage == 1) {
-                    setArrayEvent(data.events);
-                }
-                else {
-                    setArrayEvent(...arrayEvent, data.events);
+            setTotalEvents(data.count);
+            if (data && data.events) {
+                if (currentpage === 1) {
+                    // const uniqueEvents = data.events.filter(newEvent =>
+                    //     !arrayEvent.some(existingEvent => existingEvent.id === newEvent.id)
+                    // );
+                    if (data?.events.length > 0) {
+                        setArrayEvent(data?.events);
+                    }
+                } else {
+                    const newEvents = data.events.filter(newEvent =>
+                        !arrayEvent.some(existingEvent => existingEvent.id === newEvent.id)
+                    );
+                    if (newEvents.length > 0) {
+                        setArrayEvent(prevHistory => [...prevHistory, ...newEvents]);
+                    }
                 }
             }
             else {
@@ -135,6 +156,8 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
     const backClicked = async () => {
         navigation.goBack();
     }
+
+    // console.log("rrayEventrrayEventrrayEvent", arrayEvent)
 
 
     const logOutClicked = async () => {
@@ -214,7 +237,7 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
                                 <FlatList
                                     data={arrayEvent}
                                     renderItem={({ item }) => <EventComponent objEvent={item} actionOnRow={() => actionOnRow(item)} />}
-                                    keyExtractor={(item, index) => item.id}
+                                    keyExtractor={(item, index) => index.toString()}
                                     showsHorizontalScrollIndicator={false}
                                     onEndReached={({ distanceFromEnd }) => {
                                         if (distanceFromEnd < 0) return;
