@@ -28,8 +28,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { removeUser } from "../../state/slices/authenticationSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getEvent } from "../../constants/services";
-
-
+import debounce from 'lodash.debounce';
 interface Prop {
     navigation: any;
 }
@@ -45,11 +44,27 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
     const [arrayEvent, setArrayEvent] = useState([]);
     const [totalEvents, setTotalEvents] = useState(0);
     const [currentpage, setCurrentpage] = useState(1);
-
+    const [debouncedSearch, setDebouncedSearch] = useState(search);
 
     useEffect(() => {
         getEvents();
     }, [status, currentpage])
+
+    const debouncedSearchHandler = debounce((value: string) => {
+        setDebouncedSearch(value);
+    }, 1500);
+
+    useEffect(() => {
+        debouncedSearchHandler(search);
+        return () => {
+            debouncedSearchHandler.cancel();
+        };
+    }, [search]);
+
+    useEffect(() => {
+        setCurrentpage(1);
+        getEvents();
+    }, [debouncedSearch]);
 
     // useEffect(() => {
     //     const intervale = setTimeout(() => {
@@ -63,18 +78,19 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
     // }, [search]);
 
 
-    console.log("totalEvents < arrayEvent?.length", totalEvents, arrayEvent?.length, totalEvents > arrayEvent?.length)
+    console.log("totalEvents < arrayEvent?.length", totalEvents, arrayEvent?.length, totalEvents > arrayEvent?.length, currentpage < Math.ceil(totalEvents / 4), currentpage, Math.ceil(totalEvents / 4))
 
     const nextPage = async () => {
+        if (isLoading) return;
         if (totalEvents > arrayEvent?.length && currentpage < Math.ceil(totalEvents / 4)) {
-            setCurrentpage(currentpage + 1)
-            await getEvents();
+            setCurrentpage(prev => prev + 1)
+            // await getEvents();
         }
     }
 
     const searchValueChanged = async (text: string = '') => {
         setSearch(text);
-        // setArrayEvent([]);
+        setArrayEvent([]);
     }
 
     const upcomingClicked = () => {
@@ -101,13 +117,9 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
         }
     }
 
-    const getEvents = async (showLoader: Boolean = true) => {
-        if (showLoader == true) {
-            setLoading(true);
-        }
-
-        //LOGIN API CALL
-        var params = JSON.stringify({
+    const getEvents = async () => {
+        setLoading(true);
+        let params = JSON.stringify({
             'keyword': search,
             'pageNumber': currentpage,
             'pageSize': 4,
@@ -117,47 +129,101 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
             'status': status
         })
         console.log("paramsparamsparams", params)
-        console.log("truefirst")
-        const [success, message, data, error] = await postParamRequest(events_list, params);
-        if (error != null) {
-            Alert.alert("Error", error);
-            setArrayEvent([]);
-        }
-        else if (success == false || data == null) {
-            // setArrayEvent([]);
-            // Alert.alert("Failed", message);
-        }
-        else {
-            setTotalEvents(data.count);
-            if (data && data.events) {
+        const result = await getEvent(params);
+        setLoading(false);
+        console.log("data", result)
+        if (result?.success) {
+            if (result?.data) {
+                if (result?.data?.count != totalEvents) {
+                    setTotalEvents(result?.data?.count);
+                }
+                // setTotalEvents(result?.data?.count);
+            }
+            if (result?.data?.events) {
                 if (currentpage === 1) {
-                    // const uniqueEvents = data.events.filter(newEvent =>
-                    //     !arrayEvent.some(existingEvent => existingEvent.id === newEvent.id)
-                    // );
-                    if (data?.events.length > 0) {
-                        setArrayEvent(data?.events);
+                    if (result?.data?.events.length > 0) {
+                        setArrayEvent(result?.data?.events);
                     }
                 } else {
-                    const newEvents = data.events.filter(newEvent =>
+                    setLoading(true);
+                    const newEvents = result?.data?.events.filter(newEvent =>
                         !arrayEvent.some(existingEvent => existingEvent.id === newEvent.id)
                     );
                     if (newEvents.length > 0) {
                         setArrayEvent(prevHistory => [...prevHistory, ...newEvents]);
                     }
+                    setLoading(false);
                 }
-            }
-            else {
+            } else {
                 setArrayEvent([]);
+                setCurrentpage(1);
             }
+
+        } else {
+            Alert.alert("Error", result?.message);
+            // setArrayEvent([]);
         }
-        setLoading(false);
     }
+
+    // const getEvents = async (showLoader: Boolean = true) => {
+    //     if (showLoader == true) {
+    //         setLoading(true);
+    //     }
+
+    //     //LOGIN API CALL
+    //     var params = JSON.stringify({
+    //         'keyword': search,
+    //         'pageNumber': currentpage,
+    //         'pageSize': 4,
+    //         'isLogin': true,
+    //         'isLike': false,
+    //         'userId': authentication?.user?.id,
+    //         'status': status
+    //     })
+    //     console.log("paramsparamsparams", params)
+    //     console.log("truefirst")
+    //     const [success, message, data, error] = await postParamRequest(events_list, params);
+    //     if (error != null) {
+    //         Alert.alert("Error", error);
+    //         setArrayEvent([]);
+    //     }
+    //     else if (success == false || data == null) {
+    //         // setArrayEvent([]);
+    //         // Alert.alert("Failed", message);
+    //     }
+    //     else {
+
+    //         if (data && data.events) {
+    //             setTotalEvents(data.count);
+    //             if (currentpage === 1) {
+    //                 // const uniqueEvents = data.events.filter(newEvent =>
+    //                 //     !arrayEvent.some(existingEvent => existingEvent.id === newEvent.id)
+    //                 // );
+    //                 if (data?.events.length > 0) {
+    //                     setArrayEvent(data?.events);
+    //                 }
+    //             } else {
+    //                 setLoading(true);
+    //                 const newEvents = data.events.filter(newEvent =>
+    //                     !arrayEvent.some(existingEvent => existingEvent.id === newEvent.id)
+    //                 );
+    //                 if (newEvents.length > 0) {
+    //                     setArrayEvent(prevHistory => [...prevHistory, ...newEvents]);
+    //                 }
+    //                 setLoading(false);
+    //             }
+    //         }
+    //         else {
+    //             setArrayEvent([]);
+    //         }
+    //     }
+    //     setLoading(false);
+    // }
 
     const backClicked = async () => {
         navigation.goBack();
     }
 
-    // console.log("rrayEventrrayEventrrayEvent", arrayEvent)
 
 
     const logOutClicked = async () => {
@@ -242,7 +308,8 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
                                     onEndReached={({ distanceFromEnd }) => {
                                         if (distanceFromEnd < 0) return;
                                         nextPage()
-                                    }} /> :
+                                    }} />
+                                :
                                 <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                                     <Text style={styles.notDataLable}>No Events Found!</Text>
                                 </View>
