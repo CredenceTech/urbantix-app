@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
     View,
     Text,
@@ -12,6 +12,7 @@ import {
     Alert,
     FlatList,
     TextInput,
+    Dimensions,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from '@react-navigation/native';
@@ -29,9 +30,13 @@ import { removeUser } from "../../state/slices/authenticationSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getEvent } from "../../constants/services";
 import debounce from 'lodash.debounce';
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import BottomSheet from "../../components/BottomSheet";
+import { openComposer } from "react-native-email-link";
 interface Prop {
     navigation: any;
 }
+const { height } = Dimensions.get('screen');
 
 const HomeScreen: React.FC<Prop> = ({ }) => {
     const authentication = useSelector((state) => state.authentication)
@@ -45,6 +50,11 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
     const [totalEvents, setTotalEvents] = useState(0);
     const [currentpage, setCurrentpage] = useState(1);
     const [debouncedSearch, setDebouncedSearch] = useState(search);
+    const bottomSheetRef = useRef();
+    const pressHandler = useCallback(() => {
+        bottomSheetRef.current.expand();
+    }, []);
+
 
     useEffect(() => {
         getEvents();
@@ -65,20 +75,6 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
         setCurrentpage(1);
         getEvents();
     }, [debouncedSearch]);
-
-    // useEffect(() => {
-    //     const intervale = setTimeout(() => {
-    //         // setArrayEvent([]);
-    //         // setTotalEvents(0);
-    //         setCurrentpage(1);
-    //         // getEvents(false);
-    //     }, 1500)
-    //     return () => clearTimeout(intervale);
-
-    // }, [search]);
-
-
-    console.log("totalEvents < arrayEvent?.length", totalEvents, arrayEvent?.length, totalEvents > arrayEvent?.length, currentpage < Math.ceil(totalEvents / 4), currentpage, Math.ceil(totalEvents / 4))
 
     const nextPage = async () => {
         if (isLoading) return;
@@ -165,66 +161,9 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
         }
     }
 
-    // const getEvents = async (showLoader: Boolean = true) => {
-    //     if (showLoader == true) {
-    //         setLoading(true);
-    //     }
-
-    //     //LOGIN API CALL
-    //     var params = JSON.stringify({
-    //         'keyword': search,
-    //         'pageNumber': currentpage,
-    //         'pageSize': 4,
-    //         'isLogin': true,
-    //         'isLike': false,
-    //         'userId': authentication?.user?.id,
-    //         'status': status
-    //     })
-    //     console.log("paramsparamsparams", params)
-    //     console.log("truefirst")
-    //     const [success, message, data, error] = await postParamRequest(events_list, params);
-    //     if (error != null) {
-    //         Alert.alert("Error", error);
-    //         setArrayEvent([]);
-    //     }
-    //     else if (success == false || data == null) {
-    //         // setArrayEvent([]);
-    //         // Alert.alert("Failed", message);
-    //     }
-    //     else {
-
-    //         if (data && data.events) {
-    //             setTotalEvents(data.count);
-    //             if (currentpage === 1) {
-    //                 // const uniqueEvents = data.events.filter(newEvent =>
-    //                 //     !arrayEvent.some(existingEvent => existingEvent.id === newEvent.id)
-    //                 // );
-    //                 if (data?.events.length > 0) {
-    //                     setArrayEvent(data?.events);
-    //                 }
-    //             } else {
-    //                 setLoading(true);
-    //                 const newEvents = data.events.filter(newEvent =>
-    //                     !arrayEvent.some(existingEvent => existingEvent.id === newEvent.id)
-    //                 );
-    //                 if (newEvents.length > 0) {
-    //                     setArrayEvent(prevHistory => [...prevHistory, ...newEvents]);
-    //                 }
-    //                 setLoading(false);
-    //             }
-    //         }
-    //         else {
-    //             setArrayEvent([]);
-    //         }
-    //     }
-    //     setLoading(false);
-    // }
-
     const backClicked = async () => {
         navigation.goBack();
     }
-
-
 
     const logOutClicked = async () => {
         Alert.alert('Logout', 'Are you sure you want to logout?', [
@@ -250,84 +189,147 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
         navigation.navigate('EventGuestsScreen', { objEvent: item });
     }
 
+
+    const handleSendEmail = async () => {
+        const subject = "Delete Account Request";
+        const body = `
+Dear Urbantixs Support Team,
+
+I hope this message finds you well. I am writing to formally request the deletion of my account associated with the email address ${authentication?.user?.email} on your platform, Urbantixs App.
+
+Please confirm that all of my personal data, account details, and associated information will be permanently deleted from your system in compliance with your data privacy policies and applicable regulations.
+
+Details of the account to be deleted:
+- Email Address: ${authentication?.user?.email}
+- Username : ${authentication?.user?.first_name} ${authentication?.user?.last_name}
+
+I understand that this action is irreversible, and I will no longer be able to access any data or services tied to this account once the deletion is complete. Please provide me with a confirmation once the process has been finalized.
+
+Thank you for your prompt assistance in this matter.
+
+Best regards,  
+${authentication?.user?.first_name} ${authentication?.user?.last_name}  
+Urbantixs User
+    `;
+        try {
+            await openComposer({
+                to: "customerservice@urbantixs.com",
+                subject: subject,
+                body: body,
+            });
+        } catch (error) {
+
+        }
+    };
+
     return (
-        <View style={custome_screenContainer.view_container}>
-            <Loader isLoading={isLoading} />
-            <View style={{ backgroundColor: primary_color, height: safeAreaInsets.top }}>
-                <StatusBar backgroundColor='#3e8b2b' barStyle="light-content" />
-            </View>
-            <SafeAreaView style={styles.SafeAreaView}>
-                <KeyboardAvoidingView
-                    style={{ flex: 1 }}
-                    behavior={Platform.OS === "ios" ? "padding" : "height"}>
-                    {/* <NavigationBar isShowBack={false} backClicked={backClicked} isShowTitle={true} screenTitle={'Event List'} isShowLogout={false} logOutClicked={logOutClicked} /> */}
-                    <View style={styles.mainView}>
-                        <View style={{ flexDirection: "row", backgroundColor: white_color, paddingHorizontal: 10, paddingVertical: 5, height: 50 }}>
-                            <Image
-                                source={require("../../assets/images/search.png")}
-                                style={styles.search_image}
-                            />
-                            <TextInput
-                                style={{ fontSize: 14, fontWeight: "normal", color: black_color, flex: 1 }}
-                                placeholder="Search"
-                                placeholderTextColor='#808080'
-                                onChangeText={(text) =>
-                                    searchValueChanged(text)
-                                }
-                                value={search} />
-                        </View>
-                        <View style={{ flexDirection: "row", height: 50 }}>
-                            <TouchableOpacity style={{ flex: 1, backgroundColor: primary_color }} onPress={upcomingClicked}>
-                                <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-                                    <Text style={{ color: white_color, textAlign: "center", fontSize: 14, fontWeight: "bold" }}>Live Events</Text>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+            <View style={custome_screenContainer.view_container}>
+                <Loader isLoading={isLoading} />
+                <View style={{ backgroundColor: primary_color, height: safeAreaInsets.top }}>
+                    <StatusBar backgroundColor='#3e8b2b' barStyle="light-content" />
+                </View>
+                <SafeAreaView style={styles.SafeAreaView}>
+                    <KeyboardAvoidingView
+                        style={{ flex: 1 }}
+                        behavior={Platform.OS === "ios" ? "padding" : "height"}>
+                        {/* <NavigationBar isShowBack={false} backClicked={backClicked} isShowTitle={true} screenTitle={'Event List'} isShowLogout={false} logOutClicked={logOutClicked} /> */}
+                        <View style={styles.mainView}>
+                            <View style={{ flexDirection: "row", }}>
+                                <View style={{ width: `${(Platform.OS === "ios") ? "87%" : "100%"}`, flexDirection: "row", backgroundColor: white_color, paddingHorizontal: 10, paddingVertical: 5, height: 50 }}>
+                                    <Image
+                                        source={require("../../assets/images/search.png")}
+                                        style={styles.search_image}
+                                    />
+                                    <TextInput
+                                        style={{ fontSize: 14, fontWeight: "normal", color: black_color, flex: 1 }}
+                                        placeholder="Search"
+                                        placeholderTextColor='#808080'
+                                        onChangeText={(text) =>
+                                            searchValueChanged(text)
+                                        }
+                                        value={search} />
                                 </View>
-                                <View style={{ height: 3, backgroundColor: status == 'Upcoming' ? white_color : primary_color }} ></View>
-                            </TouchableOpacity>
-                            <View style={{ width: 3 }}></View>
-                            <TouchableOpacity style={{ flex: 1, backgroundColor: primary_color }} onPress={pastClicked}>
-                                <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-                                    <Text style={{ color: white_color, textAlign: "center", fontSize: 14, fontWeight: "bold" }}>Past Events</Text>
-                                </View>
-                                <View style={{ height: 3, backgroundColor: status == 'Past' ? white_color : primary_color }} ></View>
-                            </TouchableOpacity>
-                            <View style={{ width: 3 }}></View>
-                            {/* <TouchableOpacity style={{ flex: 1, backgroundColor: primary_color }} onPress={draftClicked}>
+                                <TouchableOpacity onPress={pressHandler} activeOpacity={0.7} style={{ width: `${!(Platform.OS === "ios") ? "13%" : "0%"}`, flexDirection: "row", backgroundColor: primary_color, paddingHorizontal: 10, paddingVertical: 5, height: 50 }}>
+                                    <Image
+                                        source={require("../../assets/images/setting.png")}
+                                        style={styles.setting_img}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+
+                            <View style={{ flexDirection: "row", height: 50 }}>
+                                <TouchableOpacity style={{ flex: 1, backgroundColor: primary_color, }} onPress={upcomingClicked}>
+                                    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+                                        <Text style={{ color: white_color, textAlign: "center", fontSize: 14, fontWeight: "bold" }}>Live Events</Text>
+                                    </View>
+                                    <View style={{ height: 3, backgroundColor: status == 'Upcoming' ? white_color : primary_color }} ></View>
+                                </TouchableOpacity>
+                                <View style={{ width: 3 }}></View>
+                                <TouchableOpacity style={{ flex: 1, backgroundColor: primary_color, }} onPress={pastClicked}>
+                                    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+                                        <Text style={{ color: white_color, textAlign: "center", fontSize: 14, fontWeight: "bold" }}>Past Events</Text>
+                                    </View>
+                                    <View style={{ height: 3, backgroundColor: status == 'Past' ? white_color : primary_color }} ></View>
+                                </TouchableOpacity>
+                                {/* <View style={{ width: 3 }}></View> */}
+                                {/* <TouchableOpacity style={{ flex: 1, backgroundColor: primary_color }} onPress={draftClicked}>
                                 <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                                     <Text style={{ color: white_color, textAlign: "center", fontSize: 14, fontWeight: "bold" }}>Draft Events</Text>
                                 </View>
                                 <View style={{ height: 3, backgroundColor: status == 'Draft' ? white_color : primary_color }} ></View>
                             </TouchableOpacity> */}
-                        </View>
-                        {
-                            arrayEvent?.length > 0 ?
-                                <FlatList
-                                    data={arrayEvent}
-                                    renderItem={({ item }) => <EventComponent objEvent={item} actionOnRow={() => actionOnRow(item)} />}
-                                    keyExtractor={(item, index) => index.toString()}
-                                    showsHorizontalScrollIndicator={false}
-                                    onEndReached={({ distanceFromEnd }) => {
-                                        if (distanceFromEnd < 0) return;
-                                        nextPage()
-                                    }} />
-                                :
-                                <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-                                    <Text style={styles.notDataLable}>No Events Found!</Text>
-                                </View>
-                        }
-                        <View style={{ flexDirection: "row", height: 50 }}>
-                            <View style={{ flex: 1, justifyContent: "center", paddingHorizontal: 20 }}>
-                                <Text style={{ color: white_color, textAlign: "left", fontSize: 14, fontWeight: "bold" }}>{`${authentication?.user?.first_name} ${authentication?.user?.last_name}`}</Text>
                             </View>
-                            <TouchableOpacity style={{ width: 130 }} onPress={logOutClicked}>
-                                <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-                                    <Text style={{ color: blue_color, textAlign: "center", fontSize: 14, fontWeight: "bold" }}>Log me out</Text>
+                            {
+                                arrayEvent?.length > 0 ?
+                                    <FlatList
+                                        data={arrayEvent}
+                                        renderItem={({ item }) => <EventComponent objEvent={item} actionOnRow={() => actionOnRow(item)} />}
+                                        keyExtractor={(item, index) => index.toString()}
+                                        showsHorizontalScrollIndicator={false}
+                                        onEndReached={({ distanceFromEnd }) => {
+                                            if (distanceFromEnd < 0) return;
+                                            nextPage()
+                                        }} />
+                                    :
+                                    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+                                        <Text style={styles.notDataLable}>No Events Found!</Text>
+                                    </View>
+                            }
+                            <View style={{ flexDirection: "row", height: 50 }}>
+                                <View style={{ flex: 1, justifyContent: "center", paddingHorizontal: 20 }}>
+                                    <Text style={{ color: white_color, textAlign: "left", fontSize: 14, fontWeight: "bold" }}>{`${authentication?.user?.first_name} ${authentication?.user?.last_name}`}</Text>
                                 </View>
-                            </TouchableOpacity>
+                                <TouchableOpacity style={{ width: 130 }} onPress={logOutClicked}>
+                                    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+                                        <Text style={{ color: blue_color, textAlign: "center", fontSize: 14, fontWeight: "bold" }}>Log me out</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
                         </View>
-                    </View>
-                </KeyboardAvoidingView>
-            </SafeAreaView>
-        </View>
+                        <BottomSheet
+                            ref={bottomSheetRef}
+                            activeHeight={height * 0.4}
+                            backgroundColor={'#DAD3C8'}
+                            backDropColor={'black'}>
+                            <View
+                                style={{
+                                    flex: 1,
+                                    justifyContent: 'space-between',
+                                }}>
+                                <View>
+                                    <View>
+                                        <TouchableOpacity onPress={handleSendEmail} activeOpacity={0.8} style={styles.button}>
+                                            <Text style={styles.buttonText}>Delete Account Request</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </View>
+                        </BottomSheet>
+                    </KeyboardAvoidingView>
+                </SafeAreaView>
+            </View>
+        </GestureHandlerRootView>
     );
 };
 
@@ -355,6 +357,29 @@ const styles = StyleSheet.create({
         marginRight: 10,
         tintColor: primary_color
     },
+    setting_img: {
+        width: 25,
+        height: 25,
+        resizeMode: 'contain',
+        marginVertical: 5,
+        marginRight: 5,
+        tintColor: black_color
+    },
+    button: {
+        alignItems: 'center',
+        backgroundColor: '#000000',
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+        marginHorizontal: 20,
+        marginBottom: 20,
+        borderRadius: 10,
+        marginTop: 10,
+    },
+    buttonText: {
+        color: '#DAD3C8',
+        fontSize: 18
+    },
+
 });
 
 export default HomeScreen;
