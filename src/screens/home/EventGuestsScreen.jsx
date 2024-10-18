@@ -11,11 +11,11 @@ import {
     Platform,
     Alert,
     FlatList,
+    TextInput,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import EncryptedStorage from 'react-native-encrypted-storage';
 import { useNavigation } from '@react-navigation/native';
-import { background_color, gray_color, primary_color } from "../../constants/custome_colors";
+import { background_color, gray_color, primary_color, white_color, black_color } from "../../constants/custome_colors";
 import { custome_screenContainer, custome_buttons, custome_textfields } from "../../constants/custome_styles";
 
 import NavigationBar from "../../components/NavigationBar";
@@ -23,8 +23,9 @@ import EventGuestComponent from "../../components/EventGuestComponent";
 import Loader from "../../components/Loader";
 import { event_checkedin_list } from "../../constants/api_constants";
 import { getParamRequest } from "../../constants/api_manager";
-import moment from 'moment';
 import { useRoute } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
+import { removeUser } from "../../state/slices/authenticationSlice";
 
 interface Prop {
     navigation: any;
@@ -33,7 +34,7 @@ interface Prop {
 const EventGuestsScreen: React.FC<Prop> = ({ }) => {
 
 
-
+    const dispatch = useDispatch();
     const safeAreaInsets = useSafeAreaInsets();
     const navigation = useNavigation();
     const route = useRoute()
@@ -47,13 +48,17 @@ const EventGuestsScreen: React.FC<Prop> = ({ }) => {
     const [currentpage, setCurrentpage] = useState(1);
 
     useEffect(() => {
-        console.log('====================================');
-        console.log("this.props.objEvent");
-        console.log(objEvent);
-        console.log('====================================');
-        setCurrentpage(1)
         getEventGuests();
-    }, [])
+    }, [currentpage])
+
+    useEffect(() => {
+        getEventGuests(false);
+    }, [search])
+
+    const searchValueChanged = async (text: string = '') => {
+        setSearch(text);
+        setCurrentpage(1);
+    }
 
     const nextPage = () => {
         if (totalpages > currentpage) {
@@ -62,16 +67,13 @@ const EventGuestsScreen: React.FC<Prop> = ({ }) => {
         }
     }
 
-    const getEventGuests = async () => {
-        setLoading(true);
-
-        var date = moment().format('YYYY-MM-DD HH:mm:ss'); //Current Date
+    const getEventGuests = async (showLoader: Boolean = true) => {
+        if (showLoader == true) {
+            setLoading(true);
+        }
 
         //LOGIN API CALL
         let apiEndpoint = event_checkedin_list + '/' + objEvent.id + '/' + 'transactions?keyword=' + search + '&pageNumber=' + currentpage + '&pageSize=10'
-        console.log('====================================');
-        console.log(apiEndpoint);
-        console.log('====================================');
         const [success, message, data, error] = await getParamRequest(apiEndpoint);
         if (error !== null) {
             Alert.alert("Error", error);
@@ -86,12 +88,8 @@ const EventGuestsScreen: React.FC<Prop> = ({ }) => {
                         setArrayEventGuests(data);
                     }
                     else {
-                        setArrayEventGuests(arrayEventGuests => [...arrayEventGuests, ...data[1]]);
+                        setArrayEventGuests(...arrayEventGuests, data);
                     }
-
-                    console.log('====================================');
-                    console.log(arrayEventGuests.length);
-                    console.log('====================================');
                 }
             }
         }
@@ -106,7 +104,6 @@ const EventGuestsScreen: React.FC<Prop> = ({ }) => {
         Alert.alert('Logout', 'Are you sure you want to logout?', [
             {
                 text: 'Cancel',
-                onPress: () => console.log('Cancel Pressed'),
                 style: 'cancel',
             },
             {
@@ -117,21 +114,13 @@ const EventGuestsScreen: React.FC<Prop> = ({ }) => {
         ]);
     }
 
-    const userLogout = () => {
-        console.log('OK Pressed');
-        removeUserSession();
-        navigation.navigate('LoginScreen');
-
+    const userLogout = async () => {
+        navigation.navigate('OnBoardingScreen');
+        await AsyncStorage.removeItem('alreadylaunch');
+        dispatch(removeUser())
     }
 
-    async function removeUserSession() {
-        try {
-            await EncryptedStorage.removeItem("user_session");
-            // Congrats! You've just removed your first value!
-        } catch (error) {
-            // There was an error on the native side
-        }
-    }
+
 
     return (
         <View style={custome_screenContainer.view_container}>
@@ -145,6 +134,20 @@ const EventGuestsScreen: React.FC<Prop> = ({ }) => {
                     behavior={Platform.OS === "ios" ? "padding" : "height"}>
                     <NavigationBar isShowBack={true} backClicked={backClicked} isShowTitle={true} screenTitle={'Guest List'} isShowLogout={false} logOutClicked={logOutClicked} />
                     <View style={styles.mainView}>
+                        <View style={{ flexDirection: "row", backgroundColor: white_color, paddingHorizontal: 10, paddingVertical: 5, height: 50 }}>
+                            <Image
+                                source={require("../../assets/images/search.png")}
+                                style={styles.search_image}
+                            />
+                            <TextInput
+                                style={{ fontSize: 14, fontWeight: "normal", color: black_color, flex: 1 }}
+                                placeholder="Search"
+                                placeholderTextColor='#808080'
+                                onChangeText={(text) =>
+                                    searchValueChanged(text)
+                                }
+                                value={search} />
+                        </View>
                         {
                             arrayEventGuests.length > 0 ?
                                 <FlatList
@@ -180,6 +183,14 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '500',
         color: gray_color,
+    },
+    search_image: {
+        width: 20,
+        height: 20,
+        resizeMode: 'contain',
+        marginVertical: 10,
+        marginRight: 10,
+        tintColor: primary_color
     },
 });
 

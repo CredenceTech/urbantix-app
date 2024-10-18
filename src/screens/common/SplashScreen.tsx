@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
 import {
     View,
-    Text,
     Image,
-    StatusBar,
     StyleSheet,
 } from "react-native";
-import EncryptedStorage from 'react-native-encrypted-storage';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from '@react-navigation/native';
 import { login_background_color } from "../../constants/custome_colors";
-
-import { store } from "../../state/store";
+const { height, width } = Dimensions.get('screen');
+import { Dimensions } from "react-native";
+import { useSelector } from "react-redux";
 
 interface Prop {
     navigation: any;
@@ -20,50 +18,53 @@ interface Prop {
 const SplashScreen: React.FC<Prop> = ({ }) => {
 
     const navigation = useNavigation();
+    const authentication = useSelector((state) => state.authentication)
+
+    const getfirstLaunchData = async () => {
+        try {
+            const value = await AsyncStorage.getItem('alreadylaunch');
+            if (value !== null) {
+                retrieveUserSession();
+            } else {
+                navigation.replace("OnBoardingScreen")
+            }
+        } catch (e) {
+            // error reading value
+        }
+    };
 
     useEffect(() => {
-        //NAVIGATE AFTER 2 SECONDS
         setTimeout(() => {
-
-            retrieveUserSession();
-
-            // const persistValue = store.getState().authentication;
-            // if (persistValue != null && persistValue.user != null) {
-            //     navigation.navigate('HomeScreen');
-            // }
-            // else {
-            //     navigation.navigate('LoginScreen');
-            // }
+            getfirstLaunchData();
         }, 2000);
     }, [])
 
     async function retrieveUserSession() {
-        try {   
-            const session = await EncryptedStorage.getItem("user_session");
-            if (session !== undefined) {
-                let userObj = JSON.parse(session);
-                // Congrats! You've just retrieved your first value!
-                if (userObj.user != null && userObj.user.access_token != null) {
-                    navigation.navigate('Home');
+        try {
+            if (authentication !== null) {
+                if (authentication?.user != null && authentication?.user?.access_token != null) {
+                    navigation.reset({
+                        index: 0,
+                        routes: [{ name: 'Home' }],
+                    });
                 }
                 else {
-                    navigation.navigate('LoginScreen');
+                    navigation.replace('OnBoardingScreen');
                 }
             }
             else {
-                navigation.navigate('LoginScreen');
+                navigation.replace('OnBoardingScreen');
             }
         } catch (error) {
             // There was an error on the native side
-            navigation.navigate('LoginScreen');
+            navigation.replace('OnBoardingScreen');
         }
     }
 
     return (
         <View style={styles.MainView}>
-            {/* <StatusBar backgroundColor="#F5F5F5" barStyle="dark-content" /> */}
             <Image
-                source={require("../../assets/images/logo-header.png")}
+                source={require("../../assets/images/splash.jpg")}
                 style={styles.logo}
             />
         </View>
@@ -78,10 +79,9 @@ const styles = StyleSheet.create({
         backgroundColor: login_background_color
     },
     logo: {
-        width: 300,
-        height: 100,
-        resizeMode: 'contain',
-        marginVertical: 30,
+        width: width,
+        height: height,
+        // resizeMode: 'contain',
     },
 });
 
