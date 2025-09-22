@@ -17,6 +17,7 @@ api.interceptors.request.use(
     config.headers['Accept'] = 'application/json'; 
     config.headers['Content-Type'] = 'application/json';
     config.headers.Authorization = 'Bearer ' + authenticationUser?.user?.access_token; 
+    console.log(config, "Config")
     return config;
   },
   error => {

@@ -662,11 +662,28 @@ PODS:
     - Firebase/Auth (= 10.19.0)
     - React-Core
     - RNFBApp
+  - RNGestureHandler (2.19.0):
+    - RCT-Folly (= 2021.07.22.00)
+    - React-Core
   - RNGoogleSignin (10.1.1):
     - GoogleSignIn (~> 7.0)
     - React-Core
   - RNPermissions (4.0.0):
     - React-Core
+  - RNReanimated (3.15.1):
+    - RCT-Folly (= 2021.07.22.00)
+    - React-Core
+    - ReactCommon/turbomodule/core
+    - RNReanimated/reanimated (= 3.15.1)
+    - RNReanimated/worklets (= 3.15.1)
+  - RNReanimated/reanimated (3.15.1):
+    - RCT-Folly (= 2021.07.22.00)
+    - React-Core
+    - ReactCommon/turbomodule/core
+  - RNReanimated/worklets (3.15.1):
+    - RCT-Folly (= 2021.07.22.00)
+    - React-Core
+    - ReactCommon/turbomodule/core
   - RNScreens (3.29.0):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
@@ -758,8 +775,10 @@ DEPENDENCIES:
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
+  - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - "RNGoogleSignin (from `../node_modules/@react-native-google-signin/google-signin`)"
   - RNPermissions (from `../node_modules/react-native-permissions`)
+  - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
@@ -900,10 +919,14 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/app"
   RNFBAuth:
     :path: "../node_modules/@react-native-firebase/auth"
+  RNGestureHandler:
+    :path: "../node_modules/react-native-gesture-handler"
   RNGoogleSignin:
     :path: "../node_modules/@react-native-google-signin/google-signin"
   RNPermissions:
     :path: "../node_modules/react-native-permissions"
+  RNReanimated:
+    :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   RNSVG:
@@ -995,8 +1018,10 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: 618d03a5f52fbccb3d7010076bc54712844c18ef
   RNFBApp: c21258de1485419a845efbba9c09ec946c89891d
   RNFBAuth: 079bb1bc37a912a277aedf366fe5bf4632b069c9
+  RNGestureHandler: 7ad14a6c7b491add489246611d324f10009083ac
   RNGoogleSignin: aac5c1ec73422109dec1da770247a1e410dcc620
   RNPermissions: 880142c2c3bfb33326785e53ad36fbd1d34deb3d
+  RNReanimated: 191c738d9e8657b66dd96cae3680ab9257f221cc
   RNScreens: 3c5b9f4a9dcde752466854b6109b79c0e205dad3
   RNSVG: d00c8f91c3cbf6d476451313a18f04d220d4f396
   RNVectorIcons: 23b6e11af4aaf104d169b1b0afa7e5cf96c676ce
@@ -1004,6 +1029,6 @@ SPEC CHECKSUMS:
   Yoga: 4c3aa327e4a6a23eeacd71f61c81df1bcdf677d5
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 9ec5cfedb7ee46ea0b1941a1134f0b93359ada2b
+PODFILE CHECKSUM: 63a9e0522d0ae444d55ae38f88a32eb5a3cb6a9a
 
-COCOAPODS: 1.14.3
+COCOAPODS: 1.16.2

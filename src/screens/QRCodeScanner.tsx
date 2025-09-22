@@ -65,7 +65,7 @@ const QRScanner = () => {
           setSuccessMessage(null);
           setScanneddata(null);
         }}>
-        <Text style={{fontSize: 18, color: '#FFF'}}>Scan Again</Text>
+        <Text style={{fontSize: 18, color: '#FFF'}}>Scan New Ticket</Text>
       </TouchableOpacity>
     </SafeAreaView>
   ) : (
