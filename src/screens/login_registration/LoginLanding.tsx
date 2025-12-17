@@ -23,7 +23,6 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { logins, socialLogin } from '../../constants/services';
 import appleAuth from '@invertase/react-native-apple-authentication';
 import ProgressDialogView from '../../components/PreogressBar';
-import { AccessToken, LoginManager } from 'react-native-fbsdk-next';
 import { TextInput } from 'react-native';
 import { postParamRequest } from '../../constants/api_manager';
 import { login } from '../../constants/api_constants';
@@ -193,56 +192,6 @@ const App = () => {
     } catch (err) {
       setProgressBar(false);
     }
-  }
-
-  async function onFacebookButtonPress() {
-    const result = await LoginManager.logInWithPermissions([
-      'public_profile',
-      'email',
-    ]);
-
-    if (result.isCancelled) {
-      throw 'User cancelled the login process';
-    }
-
-    const data = await AccessToken.getCurrentAccessToken();
-
-    if (!data) {
-      throw 'Something went wrong obtaining access token';
-    }
-
-    const facebookCredential = auth.FacebookAuthProvider.credential(
-      data.accessToken,
-    );
-
-    // Sign-in the user with the credential
-    auth().signInWithCredential(facebookCredential).then(async (data) => {
-      const params = {
-        email: data?.user?.email,
-        first_name: data?.additionalUserInfo?.profile?.first_name,
-        last_name: data?.additionalUserInfo?.profile?.last_name,
-        image: data?.user?.photoURL,
-        socialMediaId: data?.user?.uid,
-        socialMediaType: 'Facebook',
-      };
-      setProgressBar(true);
-
-      const result = await socialLogin(params);
-
-      if (result?.success) {
-        const user = result?.data?.user;
-        if (user) {
-          dispatch(saveUser(user))
-        }
-        setProgressBar(false);
-        navigation.replace('Home');
-      } else {
-        setProgressBar(false);
-        Alert.alert('Error', result?.message);
-      }
-    }).catch((error) => {
-      console.log(error)
-    });
   }
 
   const logInClicked = async () => {

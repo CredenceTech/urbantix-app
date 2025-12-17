@@ -17,7 +17,6 @@ import SplashScreen from './src/screens/common/SplashScreen';
 import LoginLanding from './src/screens/login_registration/LoginLanding';
 import HomeScreen from './src/screens/home/HomeScreen';
 import EventGuestsScreen from './src/screens/home/EventGuestsScreen';
-import { Settings } from 'react-native-fbsdk-next';
 import CommonWebView from './src/screens/profile/CommonWebView';
 //SCREENS END
 
@@ -34,10 +33,6 @@ const Stack = createNativeStackNavigator();
 
 function App() {
   let persistor = persistStore(store);
-
-  useEffect(() => {
-    Settings.setAdvertiserTrackingEnabled(true);
-  }, []);
 
   return (
     <Provider store={store}>
