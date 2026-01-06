@@ -1,4 +1,79 @@
 {
-  "name": "UrbanTixs",
-  "displayName": "UrbanTixs"
+  "expo": {
+    "name": "UrbanTixs",
+    "slug": "urbantix-app",
+    "version": "1.0.0",
+    "orientation": "default",
+    "icon": "./assets/logo.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "scheme": "urbantixapp",
+    "splash": {
+      "image": "./assets/splash_screen_large.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#000000"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.urbantixs",
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "appleTeamId": "TV7TL5MRV9",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app needs access to the camera to scan QR codes for event check-in."
+      },
+      "splash": {
+        "image": "./assets/splash_screen_large.png",
+        "resizeMode": "cover",
+        "backgroundColor": "#000000"
+      }
+    },
+    "android": {
+      "versionCode": 21,
+      "version": "21",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/logo.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.urbantixs",
+      "googleServicesFile": "./google-services.json",
+      "permissions": [
+        "CAMERA",
+        "VIBRATE"
+      ],
+      "splash": {
+        "image": "./assets/splash_screen_large.png",
+        "resizeMode": "cover",
+        "backgroundColor": "#000000"
+      }
+    },
+    "web": {
+      "favicon": "./assets/logo.png"
+    },
+    "plugins": [
+      "expo-asset",
+      [
+        "@react-native-google-signin/google-signin"
+      ],
+      "./plugins/withFullScreenBootsplash.js",
+      "./plugins/withUrbantixsKeystore.js",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+          "recordAudioAndroid": true
+        }
+      ],
+      "expo-build-properties",
+      [
+        "react-native-permissions",
+        {
+          "iosPermissions": [
+            "Camera",
+            "Microphone"
+          ]
+        }
+      ]
+    ]
+  }
 }

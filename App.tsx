@@ -38,7 +38,10 @@ function App() {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <SafeAreaProvider>
-          <NavigationContainer theme={MyTheme} ref={navigationRef} >
+          <NavigationContainer
+            theme={MyTheme}
+            ref={navigationRef}
+          >
             <Stack.Navigator screenOptions={headerStyle} >
               <Stack.Screen name="SplashScreen" component={SplashScreen} />
               <Stack.Screen name="OnBoardingScreen" options={{ headerShown: false }} component={OnBoardingScreen} />
@@ -70,6 +73,24 @@ export const MyTheme = {
     text: 'rgb(28, 28, 30)',
     border: 'rgb(199, 199, 204)',
     notification: 'rgb(255, 69, 58)',
+  },
+  fonts: {
+    regular: {
+      fontFamily: 'System',
+      fontWeight: '400' as '400',
+    },
+    medium: {
+      fontFamily: 'System',
+      fontWeight: '500' as '500',
+    },
+    bold: {
+      fontFamily: 'System',
+      fontWeight: '700' as '700',
+    },
+    heavy: {
+      fontFamily: 'System',
+      fontWeight: '900' as '900',
+    },
   },
 };
 

@@ -7,12 +7,9 @@ import {
   Easing,
   View,
   Text,
-  Platform,
   TouchableWithoutFeedback,
-  PermissionsAndroid,
 } from 'react-native';
-import { RNCamera as Camera } from 'react-native-camera';
-import { PERMISSIONS, RESULTS, request } from 'react-native-permissions';
+import { CameraView, CameraType, FlashMode, Camera } from 'expo-camera';
 
 type QRCodeScannerProps = {
   onRead: (data: any) => void;
@@ -33,11 +30,7 @@ type QRCodeScannerProps = {
   topContent?: React.ReactElement | string;
   bottomContent?: React.ReactElement | string;
   notAuthorizedView?: React.ReactElement;
-  permissionDialogTitle?: string;
-  permissionDialogMessage?: string;
-  buttonPositive?: string;
-  checkAndroid6Permissions?: boolean;
-  flashMode?: string;
+  flashMode?: FlashMode;
   cameraProps?: Record<string, any>;
   cameraTimeoutView?: React.ReactElement;
 };
@@ -87,11 +80,7 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
       </Text>
     </View>
   ),
-  permissionDialogTitle = 'Info',
-  permissionDialogMessage = 'Need camera permission',
-  buttonPositive = 'OK',
-  checkAndroid6Permissions = false,
-  flashMode = CAMERA_FLASH_MODE.auto,
+  flashMode = 'off',
   cameraProps = {},
   cameraTimeoutView = (
     <View
@@ -128,27 +117,13 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
 
   useEffect(() => {
     const checkCameraPermission = async () => {
-      if (Platform.OS === 'ios') {
-        const cameraStatus = await request(PERMISSIONS.IOS.CAMERA);
-        setIsAuthorized(cameraStatus === RESULTS.GRANTED);
+      try {
+        const { status } = await Camera.requestCameraPermissionsAsync();
+        setIsAuthorized(status === 'granted');
         setAuthorizationChecked(true);
-      } else if (
-        Platform.OS === 'android' &&
-        checkAndroid6Permissions
-      ) {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.CAMERA,
-          {
-            title: permissionDialogTitle,
-            message: permissionDialogMessage,
-            buttonPositive,
-          }
-        );
-        const isAuthorized = granted === PermissionsAndroid.RESULTS.GRANTED;
-        setIsAuthorized(isAuthorized);
-        setAuthorizationChecked(true);
-      } else {
-        setIsAuthorized(true);
+      } catch (error) {
+        console.error('Error requesting camera permission:', error);
+        setIsAuthorized(false);
         setAuthorizationChecked(true);
       }
     };
@@ -246,22 +221,18 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
   };
 
   const renderCameraComponent = () => {
+    const facing = cameraType === 'back' ? 'back' : 'front';
+
     return (
-      <Camera
-        androidCameraPermissionOptions={{
-          title: permissionDialogTitle,
-          message: permissionDialogMessage,
-          buttonPositive,
-        }}
+      <CameraView
         style={[styles.camera, cameraStyle]}
-        onBarCodeRead={handleBarCodeRead}
-        type={cameraType}
-        flashMode={flashMode}
-        captureAudio={false}
+        onBarcodeScanned={handleBarCodeRead}
+        facing={facing}
+        flash={flashMode}
         {...cameraProps}
       >
         {renderCameraMarker()}
-      </Camera>
+      </CameraView>
     );
   };
 

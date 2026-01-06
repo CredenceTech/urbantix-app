@@ -21,13 +21,12 @@ import { Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { logins, socialLogin } from '../../constants/services';
-import appleAuth from '@invertase/react-native-apple-authentication';
+import * as AppleAuthentication from 'expo-apple-authentication';
 import ProgressDialogView from '../../components/PreogressBar';
 import { TextInput } from 'react-native';
 import { postParamRequest } from '../../constants/api_manager';
 import { login } from '../../constants/api_constants';
 const { height, width } = Dimensions.get('screen');
-import auth from '@react-native-firebase/auth';
 import { custome_screenContainer } from "../../constants/custome_styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDispatch } from 'react-redux';
@@ -109,17 +108,17 @@ const App = () => {
   async function signInWithGoogle() {
     try {
       await GoogleSignin.signOut();
-      const { idToken } = await GoogleSignin.signIn();
-      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
       setProgressBar(true);
-      let data = await auth().signInWithCredential(googleCredential);
-      if (data?.user != undefined && data?.user != null) {
+      const userInfo = await GoogleSignin.signIn();
+
+      if (userInfo?.data?.user) {
+        const { user } = userInfo.data;
         const params = {
-          email: data?.additionalUserInfo?.profile?.email,
-          first_name: data?.additionalUserInfo?.profile?.given_name,
-          last_name: data?.additionalUserInfo?.profile?.family_name,
-          image: data?.additionalUserInfo?.profile?.picture,
-          socialMediaId: data.user.uid,
+          email: user.email,
+          first_name: user.givenName,
+          last_name: user.familyName,
+          image: user.photo,
+          socialMediaId: user.id,
           socialMediaType: 'Google',
         };
 
@@ -150,47 +149,45 @@ const App = () => {
 
   async function onAppleButtonPress() {
     try {
-      const appleAuthRequestResponse = await appleAuth.performRequest({
-        requestedOperation: appleAuth.Operation.LOGIN,
-        requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+      setProgressBar(true);
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
       });
-      const credentialState = await appleAuth.getCredentialStateForUser(
-        appleAuthRequestResponse.user,
-      );
-      if (credentialState === appleAuth.State.AUTHORIZED) {
-        const params = {
-          email: appleAuthRequestResponse?.email,
-          first_name: appleAuthRequestResponse?.fullName.givenName || '',
-          last_name: appleAuthRequestResponse?.fullName.familyName || '',
-          image: '',
-          socialMediaId: appleAuthRequestResponse?.user,
-          socialMediaType: 'Apple',
-        };
 
-        setProgressBar(true);
+      const params = {
+        email: credential?.email || '',
+        first_name: credential?.fullName?.givenName || '',
+        last_name: credential?.fullName?.familyName || '',
+        image: '',
+        socialMediaId: credential?.user,
+        socialMediaType: 'Apple',
+      };
 
-        const result = await socialLogin(params);
+      const result = await socialLogin(params);
 
-        if (result?.success) {
-          const user = result?.data?.user;
-          if (user) {
-            dispatch(saveUser(user))
-          }
-          setProgressBar(false);
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'Home' }],
-          });
-          // navigation.replace('Home');
-        } else {
-          setProgressBar(false);
-          Alert.alert('Error', result?.message);
+      if (result?.success) {
+        const user = result?.data?.user;
+        if (user) {
+          dispatch(saveUser(user))
         }
+        setProgressBar(false);
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Home' }],
+        });
       } else {
         setProgressBar(false);
+        Alert.alert('Error', result?.message);
       }
-    } catch (err) {
+    } catch (err: any) {
       setProgressBar(false);
+      if (err.code !== 'ERR_REQUEST_CANCELED') {
+        // User cancelled the sign-in flow
+        Alert.alert('Error', 'Failed to sign in with Apple. Please try again.');
+      }
     }
   }
 
