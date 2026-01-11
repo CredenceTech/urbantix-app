@@ -14,8 +14,10 @@
       "backgroundColor": "#000000"
     },
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "com.urbantixs",
+      "version": "1.08",
+      "buildNumber": "1",
       "googleServicesFile": "./GoogleService-Info.plist",
       "appleTeamId": "TV7TL5MRV9",
       "infoPlist": {

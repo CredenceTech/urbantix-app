@@ -1,63 +1,55 @@
-import React, { Component } from "react";
+import React from "react";
 import {
     View,
     Text,
-    Image,
-    TextInput,
     StyleSheet,
     Dimensions,
     TouchableWithoutFeedback,
 } from "react-native";
-import { black_color, white_color, green_color, primary_color } from "../constants/custome_colors";
+import { black_color, white_color } from "../constants/custome_colors";
 import * as Progress from 'react-native-progress';
 import moment from 'moment';
 
-class EventComponent extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            objEvent: this.props.objEvent,
-            actionOnRow: this.props.actionOnRow
-        }
-    }
-
-    static getDerivedStateFromProps(nextProps) {
-        return {
-            objEvent: nextProps.objEvent,
-            actionOnRow: nextProps.actionOnRow
-        };
-    }
-
-    render() {
-
-
-
-        return (
-            <TouchableWithoutFeedback onPress={this.state.actionOnRow}>
-                <View style={styles.main_view}>
-                    <Text style={styles.event_title}>{this.state.objEvent.name}</Text>
-                    <Text style={styles.event_address}>{this.state.objEvent.place}</Text>
-                    <Text style={styles.event_datetime}>
-                        {/* {moment(this.state.objEvent.start_date, 'YYYY-MM-DD HH:mm:ss').format('dddd MMMM D, YYYY at HH:mm')} */}
-                        {moment(this.state.objEvent.start_date).format('dddd MMMM D, YYYY hh:mm a')}
-                    </Text>
-                    <View style={{ flexDirection: "row", marginTop: 10, marginBottom: 5 }}>
-                        <Text style={styles.event_datetime}>{this.state.objEvent.total_sold}/{this.state.objEvent.total_tickets}</Text>
-                        <View style={{ flex: 1 }} />
-                        <Text style={styles.event_datetime}>${this.state.objEvent.minimum_price}</Text>
-                    </View>
-                    {/* <Progress.Bar progress={1} color="#3e8b2b" height={2} width={(Dimensions.get('window').width - 30)} /> */}
-                    {this.state.objEvent.total_tickets > 0
-                        ?
-                        <Progress.Bar progress={((this.state.objEvent.total_sold / this.state.objEvent.total_tickets) * 100) / 100} color="#3e8b2b" height={2} width={(Dimensions.get('window').width - 30)} />
-                        :
-                        <Progress.Bar progress={1} color="#3e8b2b" height={2} width={(Dimensions.get('window').width - 30)} />}
-
-                </View>
-            </TouchableWithoutFeedback>
-        )
-    }
+interface EventComponentProps {
+    objEvent: {
+        name: string;
+        place: string;
+        start_date: string;
+        total_sold: number;
+        total_tickets: number;
+        minimum_price: number;
+    };
+    actionOnRow: () => void;
 }
+
+const EventComponent: React.FC<EventComponentProps> = ({ objEvent, actionOnRow }) => {
+    const progress = objEvent.total_tickets > 0
+        ? (objEvent.total_sold / objEvent.total_tickets)
+        : 1;
+
+    return (
+        <TouchableWithoutFeedback onPress={actionOnRow}>
+            <View style={styles.main_view}>
+                <Text style={styles.event_title}>{objEvent.name}</Text>
+                <Text style={styles.event_address}>{objEvent.place}</Text>
+                <Text style={styles.event_datetime}>
+                    {moment(objEvent.start_date).format('dddd MMMM D, YYYY hh:mm a')}
+                </Text>
+                <View style={{ flexDirection: "row", marginTop: 10, marginBottom: 5 }}>
+                    <Text style={styles.event_datetime}>{objEvent.total_sold}/{objEvent.total_tickets}</Text>
+                    <View style={{ flex: 1 }} />
+                    <Text style={styles.event_datetime}>${objEvent.minimum_price}</Text>
+                </View>
+                <Progress.Bar
+                    progress={progress}
+                    color="#3e8b2b"
+                    height={2}
+                    width={(Dimensions.get('window').width - 30)}
+                />
+            </View>
+        </TouchableWithoutFeedback>
+    );
+};
 
 const styles = StyleSheet.create({
     main_view: {

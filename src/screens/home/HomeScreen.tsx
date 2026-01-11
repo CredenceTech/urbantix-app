@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
     View,
     Text,
@@ -10,21 +10,18 @@ import {
     KeyboardAvoidingView,
     Platform,
     Alert,
-    FlatList,
     TextInput,
     Dimensions,
 } from "react-native";
+import { LegendList } from "@legendapp/list";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from '@react-navigation/native';
 import { background_color, black_color, blue_color, gray_color, primary_color, white_color } from "../../constants/custome_colors";
-import { custome_screenContainer, custome_buttons, custome_textfields } from "../../constants/custome_styles";
+import { custome_screenContainer } from "../../constants/custome_styles";
 
-import NavigationBar from "../../components/NavigationBar";
 import EventComponent from "../../components/EventComponent";
 import Loader from "../../components/Loader";
-import { events_list } from "../../constants/api_constants";
-import { api, postParamRequest } from "../../constants/api_manager";
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import { api } from "../../constants/api_manager";
 import { useDispatch, useSelector } from "react-redux";
 import { removeUser } from "../../state/slices/authenticationSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -32,61 +29,106 @@ import { getEvent } from "../../constants/services";
 import debounce from 'lodash.debounce';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet from "../../components/BottomSheet";
-interface Prop {
-    navigation: any;
-}
-const { height } = Dimensions.get('screen');
+import { ActivityIndicator } from 'react-native';
 
-const HomeScreen: React.FC<Prop> = ({ }) => {
-    const authentication = useSelector((state) => state.authentication)
+interface EventItem {
+    id: string;
+    name: string;
+    place: string;
+    start_date: string;
+    total_sold: number;
+    total_tickets: number;
+    minimum_price: number;
+}
+
+interface FooterProps {
+    isLoadingNextPage: boolean;
+}
+
+const FooterComponent: React.FC<FooterProps> = ({ isLoadingNextPage }) => {
+    if (!isLoadingNextPage) {
+        return null;
+    }
+
+    return (
+        <View style={{ padding: 20, alignItems: 'center' }}>
+            <ActivityIndicator size="small" color={primary_color} />
+        </View>
+    );
+};
+
+const { height } = Dimensions.get('screen');
+const PAGE_SIZE = 10;
+
+const HomeScreen: React.FC = () => {
+    const authentication = useSelector((state: any) => state.authentication);
     const safeAreaInsets = useSafeAreaInsets();
-    const navigation = useNavigation();
+    const navigation = useNavigation<any>();
     const dispatch = useDispatch();
     const [isLoading, setLoading] = useState(true);
+    const [isLoadingNextPage, setLoadingNextPage] = useState(false);
+    const [isSearchLoading, setSearchLoading] = useState(false);
     const [search, setSearch] = useState('');
     const [status, setStatus] = useState('Upcoming'); // Past,Upcoming,Draft
-    const [arrayEvent, setArrayEvent] = useState([]);
+    const [arrayEvent, setArrayEvent] = useState<EventItem[]>([]);
     const [totalEvents, setTotalEvents] = useState(0);
     const [currentpage, setCurrentpage] = useState(1);
     const [debouncedSearch, setDebouncedSearch] = useState(search);
-    const bottomSheetRef = useRef();
+    const bottomSheetRef = useRef<any>(null);
+
     const pressHandler = useCallback(() => {
-        bottomSheetRef.current.expand();
+        bottomSheetRef.current?.expand();
     }, []);
 
+    // Memoize debounce handler to prevent recreation on every render
+    const debouncedSearchHandler = useMemo(
+        () => debounce((value: string) => {
+            setDebouncedSearch(value);
+        }, 500),
+        []
+    );
 
+    // Cleanup debounce on unmount
     useEffect(() => {
-        getEvents();
-    }, [status, currentpage])
-
-    const debouncedSearchHandler = debounce((value: string) => {
-        setDebouncedSearch(value);
-    }, 1500);
-
-    useEffect(() => {
-        debouncedSearchHandler(search);
         return () => {
             debouncedSearchHandler.cancel();
         };
-    }, [search]);
+    }, [debouncedSearchHandler]);
 
+    // Trigger debounced search when search changes
     useEffect(() => {
-        setCurrentpage(1);
+        debouncedSearchHandler(search);
+    }, [search, debouncedSearchHandler]);
+
+    // Fetch events when status or page changes
+    useEffect(() => {
         getEvents();
+    }, [status, currentpage]);
+
+    // Reset page and fetch when debounced search changes
+    useEffect(() => {
+        if (currentpage === 1) {
+            getEvents(true); // Pass true to indicate it's a search
+        } else {
+            setCurrentpage(1);
+        }
     }, [debouncedSearch]);
 
-    const nextPage = async () => {
-        if (isLoading) return;
-        if (totalEvents > arrayEvent?.length && currentpage < Math.ceil(totalEvents / 4)) {
-            setCurrentpage(prev => prev + 1)
-            // await getEvents();
+    const nextPage = useCallback(() => {
+        if (isLoading || isLoadingNextPage) return;
+        // Check if there are more pages based on the total count from API
+        const hasMorePages = totalEvents > currentpage * PAGE_SIZE;
+        if (hasMorePages) {
+            setCurrentpage(prev => prev + 1);
         }
-    }
+    }, [isLoading, isLoadingNextPage, totalEvents, currentpage]);
 
-    const searchValueChanged = async (text: string = '') => {
+    const searchValueChanged = (text: string) => {
         setSearch(text);
-        setArrayEvent([]);
-    }
+        if (text === '') {
+            setArrayEvent([]);
+        }
+    };
 
     const upcomingClicked = () => {
         if (status != 'Upcoming') {
@@ -112,53 +154,74 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
         }
     }
 
-    const getEvents = async () => {
-        setLoading(true);
-        let params = JSON.stringify({
-            'keyword': search,
-            'pageNumber': currentpage,
-            'pageSize': 4,
-            'isLogin': true,
-            'isLike': false,
-            'userId': authentication?.user?.id,
-            'status': status
-        })
-        console.log("paramsparamsparams", params)
-        const result = await getEvent(params);
-        setLoading(false);
-        console.log("data", result)
-        if (result?.success) {
-            if (result?.data) {
-                if (result?.data?.count != totalEvents) {
-                    setTotalEvents(result?.data?.count);
-                }
-                // setTotalEvents(result?.data?.count);
-            }
-            if (result?.data?.events) {
-                if (currentpage === 1) {
-                    if (result?.data?.events.length > 0) {
-                        setArrayEvent(result?.data?.events);
+    const getEvents = async (isSearch: boolean = false) => {
+        // Determine if this is initial load, pagination, or search
+        const isInitialLoad = currentpage === 1 && !isSearch;
+        const isPagination = currentpage > 1;
+
+        if (isInitialLoad) {
+            setLoading(true);
+        } else if (isPagination) {
+            setLoadingNextPage(true);
+        } else if (isSearch) {
+            setSearchLoading(true);
+        }
+
+        const params = JSON.stringify({
+            keyword: debouncedSearch,
+            pageNumber: currentpage,
+            pageSize: PAGE_SIZE,
+            isLogin: true,
+            isLike: false,
+            userId: authentication?.user?.id,
+            status: status
+        });
+
+        try {
+            const result = await getEvent(params);
+
+            console.log(result, "Result")
+
+            if (result?.success) {
+                // Extract pagination metadata from the response
+                const count = result?.data?.count ?? 0;
+                const currentPage = result?.data?.currentPage ?? currentpage;
+                const perPage = result?.data?.perPage ?? PAGE_SIZE;
+
+                setTotalEvents(count);
+
+                if (result?.data?.events) {
+                    if (currentpage === 1) {
+                        setArrayEvent(result.data.events);
+                    } else {
+                        // Filter out duplicates when appending
+                        const newEvents = result.data.events.filter((newEvent: EventItem) =>
+                            !arrayEvent.some(existingEvent => existingEvent.id === newEvent.id)
+                        );
+                        if (newEvents.length > 0) {
+                            setArrayEvent(prev => [...prev, ...newEvents]);
+                        }
                     }
                 } else {
-                    setLoading(true);
-                    const newEvents = result?.data?.events.filter(newEvent =>
-                        !arrayEvent.some(existingEvent => existingEvent.id === newEvent.id)
-                    );
-                    if (newEvents.length > 0) {
-                        setArrayEvent(prevHistory => [...prevHistory, ...newEvents]);
+                    if (currentpage === 1) {
+                        setArrayEvent([]);
                     }
-                    setLoading(false);
                 }
             } else {
-                setArrayEvent([]);
-                setCurrentpage(1);
+                Alert.alert("Error", result?.message || "Failed to fetch events");
             }
-
-        } else {
-            Alert.alert("Error", result?.message);
-            // setArrayEvent([]);
+        } catch (error) {
+            Alert.alert("Error", "Failed to fetch events");
+        } finally {
+            if (isInitialLoad) {
+                setLoading(false);
+            } else if (isPagination) {
+                setLoadingNextPage(false);
+            } else if (isSearch) {
+                setSearchLoading(false);
+            }
         }
-    }
+    };
 
     const backClicked = async () => {
         navigation.goBack();
@@ -258,6 +321,13 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
                                             searchValueChanged(text)
                                         }
                                         value={search} />
+                                    {isSearchLoading && (
+                                        <ActivityIndicator
+                                            size="small"
+                                            color={primary_color}
+                                            style={{ alignSelf: 'center', marginLeft: 10 }}
+                                        />
+                                    )}
                                 </View>
                                 <TouchableOpacity onPress={pressHandler} activeOpacity={0.7} style={{ width: `${(Platform.OS === "ios") ? "13%" : "0%"}`, flexDirection: "row", backgroundColor: primary_color, paddingHorizontal: 10, paddingVertical: 5, height: 50 }}>
                                     <Image
@@ -289,22 +359,27 @@ const HomeScreen: React.FC<Prop> = ({ }) => {
                                 <View style={{ height: 3, backgroundColor: status == 'Draft' ? white_color : primary_color }} ></View>
                             </TouchableOpacity> */}
                             </View>
-                            {
-                                arrayEvent?.length > 0 ?
-                                    <FlatList
-                                        data={arrayEvent}
-                                        renderItem={({ item }) => <EventComponent objEvent={item} actionOnRow={() => actionOnRow(item)} />}
-                                        keyExtractor={(item, index) => index.toString()}
-                                        showsHorizontalScrollIndicator={false}
-                                        onEndReached={({ distanceFromEnd }) => {
-                                            if (distanceFromEnd < 0) return;
-                                            nextPage()
-                                        }} />
-                                    :
-                                    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-                                        <Text style={styles.notDataLable}>No Events Found!</Text>
-                                    </View>
-                            }
+                            {arrayEvent?.length > 0 ? (
+                                <LegendList
+                                    data={arrayEvent}
+                                    renderItem={({ item }: { item: EventItem }) => (
+                                        <EventComponent objEvent={item} actionOnRow={() => actionOnRow(item)} />
+                                    )}
+                                    keyExtractor={(item: EventItem) => item.id}
+                                    showsVerticalScrollIndicator={false}
+                                    onEndReached={({ distanceFromEnd }) => {
+                                        if (distanceFromEnd < 0) return;
+                                        nextPage();
+                                    }}
+                                    onEndReachedThreshold={0.5}
+                                    estimatedItemSize={120}
+                                    ListFooterComponent={() => <FooterComponent isLoadingNextPage={isLoadingNextPage} />}
+                                />
+                            ) : (
+                                <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+                                    <Text style={styles.notDataLable}>No Events Found!</Text>
+                                </View>
+                            )}
                             <View style={{ flexDirection: "row", height: 50 }}>
                                 <View style={{ flex: 1, justifyContent: "center", paddingHorizontal: 20 }}>
                                     <Text style={{ color: white_color, textAlign: "left", fontSize: 14, fontWeight: "bold" }}>{`${authentication?.user?.first_name} ${authentication?.user?.last_name}`}</Text>
