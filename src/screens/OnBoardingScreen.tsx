@@ -64,7 +64,9 @@ const Onboarding = ({ navigation }) => {
                 <View style={styles.slide}>
                     <Image
                         style={{ width: "100%", height: "100%", objectFit: "fill" }}
-                        source={require('../assets/images/slide-4.jpg')}
+                        source={Platform.OS === 'ios'
+                            ? require('../assets/images/slide-4-iPhone.png')
+                            : require('../assets/images/slide-4.jpg')}
                         resizeMode="contain"
                     />
                 </View>

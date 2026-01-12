@@ -17,11 +17,11 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.urbantixs",
       "version": "1.08",
-      "buildNumber": "1",
+      "buildNumber": "2",
       "googleServicesFile": "./GoogleService-Info.plist",
       "appleTeamId": "TV7TL5MRV9",
       "infoPlist": {
-        "NSCameraUsageDescription": "This app needs access to the camera to scan QR codes for event check-in."
+        "NSCameraUsageDescription": "UrbanTixs uses the camera to scan QR codes on your event tickets for fast check-in at venues. No photos are stored or shared."
       },
       "splash": {
         "image": "./assets/splash_screen_large.png",
@@ -30,8 +30,8 @@
       }
     },
     "android": {
-      "versionCode": 21,
-      "version": "21",
+      "versionCode": 22,
+      "version": "22",
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#ffffff"
@@ -61,21 +61,12 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
-          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
-          "recordAudioAndroid": true
+          "cameraPermission": "UrbanTixs uses the camera to scan QR codes on your event tickets for fast check-in at venues. No photos are stored or shared.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false
         }
       ],
-      "expo-build-properties",
-      [
-        "react-native-permissions",
-        {
-          "iosPermissions": [
-            "Camera",
-            "Microphone"
-          ]
-        }
-      ]
+      "expo-build-properties"
     ]
   }
 }
