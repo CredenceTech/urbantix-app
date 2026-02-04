@@ -17,11 +17,12 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.urbantixs",
       "version": "1.09",
-      "buildNumber": "1",
+      "buildNumber": "2",
       "googleServicesFile": "./GoogleService-Info.plist",
       "appleTeamId": "TV7TL5MRV9",
       "infoPlist": {
-        "NSCameraUsageDescription": "UrbanTixs uses the camera to scan QR codes on your event tickets for fast check-in at venues. No photos are stored or shared."
+        "NSCameraUsageDescription": "UrbanTixs uses the camera to scan QR codes on your event tickets for fast check-in at venues. No photos are stored or shared.",
+        "NSLocationWhenInUseUsageDescription": "UrbanTixs does not use your location in the app. This permission is present only to satisfy App Store requirements from third-party SDKs."
       },
       "splash": {
         "image": "./assets/splash_screen_large.png",
