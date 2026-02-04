@@ -16,8 +16,8 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.urbantixs",
-      "version": "1.08",
-      "buildNumber": "2",
+      "version": "1.09",
+      "buildNumber": "1",
       "googleServicesFile": "./GoogleService-Info.plist",
       "appleTeamId": "TV7TL5MRV9",
       "infoPlist": {
@@ -30,8 +30,8 @@
       }
     },
     "android": {
-      "versionCode": 22,
-      "version": "22",
+      "versionCode": 23,
+      "version": "23",
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#ffffff"
@@ -58,15 +58,15 @@
       ],
       "./plugins/withFullScreenBootsplash.js",
       "./plugins/withUrbantixsKeystore.js",
+      "expo-build-properties",
       [
-        "expo-camera",
+        "react-native-vision-camera",
         {
-          "cameraPermission": "UrbanTixs uses the camera to scan QR codes on your event tickets for fast check-in at venues. No photos are stored or shared.",
-          "microphonePermission": false,
-          "recordAudioAndroid": false
+          "cameraPermissionText": "UrbanTixs uses the camera to scan QR codes on your event tickets for fast check-in at venues. No photos are stored or shared.",
+          "enableMicrophonePermission": false,
+          "enableCodeScanner": true
         }
-      ],
-      "expo-build-properties"
+      ]
     ]
   }
 }

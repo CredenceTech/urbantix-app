@@ -1,14 +1,10 @@
 import React, { useEffect } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Alert, BackHandler, Image, Platform, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Path, Svg } from 'react-native-svg';
 import HomeScreen from './HomeScreen';
 import Orders from './Orders';
 import QRScanner from '../QRCodeScanner';
-import UserProfile from '../profile/UserProfile';
-import { primary_color } from '../../constants/custome_colors';
-// import ProductIcon from "../assets/img/ProductIconSvg.svg"
 
 const Tab = createBottomTabNavigator();
 
@@ -40,7 +36,7 @@ const HomePage = () => {
     <Tab.Navigator
       screenOptions={{
         tabBarStyle: {
-          height: Platform.OS === "android" ? 60 : (60 + safeAreaInsets.bottom),
+          height: 60 + safeAreaInsets.bottom,
           backgroundColor: "#3E8B2B",
           paddingBottom: safeAreaInsets.bottom,
           paddingTop: 5,

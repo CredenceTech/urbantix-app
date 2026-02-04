@@ -9,7 +9,31 @@ import {
   Text,
   TouchableWithoutFeedback,
 } from 'react-native';
-import { CameraView, CameraType, FlashMode, Camera } from 'expo-camera';
+import {
+  Camera,
+  type CodeType,
+  useCameraDevice,
+  useCameraPermission,
+  useCodeScanner,
+} from 'react-native-vision-camera';
+
+type FlashMode = 'off' | 'on' | 'auto' | 'torch';
+
+const SUPPORTED_CODE_TYPES: CodeType[] = [
+  'qr',
+  'pdf-417',
+  'code-128',
+  'code-39',
+  'code-93',
+  'codabar',
+  'ean-13',
+  'ean-8',
+  'upc-a',
+  'upc-e',
+  'itf',
+  'aztec',
+  'data-matrix',
+];
 
 type QRCodeScannerProps = {
   onRead: (data: any) => void;
@@ -30,7 +54,9 @@ type QRCodeScannerProps = {
   topContent?: React.ReactElement | string;
   bottomContent?: React.ReactElement | string;
   notAuthorizedView?: React.ReactElement;
+  pendingAuthorizationView?: React.ReactElement;
   flashMode?: FlashMode;
+  codeTypes?: CodeType[];
   cameraProps?: Record<string, any>;
   cameraTimeoutView?: React.ReactElement;
 };
@@ -81,6 +107,7 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
     </View>
   ),
   flashMode = 'off',
+  codeTypes = SUPPORTED_CODE_TYPES,
   cameraProps = {},
   cameraTimeoutView = (
     <View
@@ -109,25 +136,15 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
   const [scanning, setScanning] = useState(false);
   const [isCameraActivated, setCameraActivated] = useState(true);
   const fadeInOpacity = useRef(new Animated.Value(0)).current;
-  const [isAuthorized, setIsAuthorized] = useState(false);
   const [isAuthorizationChecked, setAuthorizationChecked] = useState(false);
   const [disableVibrationByUser, setDisableVibrationByUser] = useState(false);
   const scannerTimeout = useRef<NodeJS.Timeout | null>(null);
   const timer = useRef<NodeJS.Timeout | null>(null);
+  const scanningRef = useRef(false);
+  const { hasPermission, requestPermission } = useCameraPermission();
+  const device = useCameraDevice(cameraType);
 
   useEffect(() => {
-    const checkCameraPermission = async () => {
-      try {
-        const { status } = await Camera.requestCameraPermissionsAsync();
-        setIsAuthorized(status === 'granted');
-        setAuthorizationChecked(true);
-      } catch (error) {
-        console.error('Error requesting camera permission:', error);
-        setIsAuthorized(false);
-        setAuthorizationChecked(true);
-      }
-    };
-
     if (fadeIn) {
       Animated.sequence([
         Animated.delay(1000),
@@ -138,9 +155,30 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
         }),
       ]).start();
     }
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+    const checkCameraPermission = async () => {
+      try {
+        if (!hasPermission) {
+          await requestPermission();
+        }
+      } catch (error) {
+        console.error('Error requesting camera permission:', error);
+      } finally {
+        if (isMounted) {
+          setAuthorizationChecked(true);
+        }
+      }
+    };
 
     checkCameraPermission();
-  }, []);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [hasPermission, requestPermission]);
 
   const disable = () => {
     setDisableVibrationByUser(true);
@@ -151,12 +189,13 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
   };
 
   const setScanningValue = (value: boolean) => {
+    scanningRef.current = value;
     setScanning(value);
   };
 
   const setCameraValue = (value: boolean) => {
     setCameraActivated(value);
-    setScanning(false);
+    setScanningValue(false);
     fadeInOpacity.setValue(0);
     if (value && fadeIn) {
       Animated.sequence([
@@ -171,18 +210,19 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
   };
 
   const handleBarCodeRead = (e: any) => {
-    if (!scanning && !disableVibrationByUser) {
-      if (vibrate) {
-        Vibration.vibrate();
-      }
-      setScanning(true);
-      onRead(e);
-      if (reactivate) {
-        scannerTimeout.current = setTimeout(
-          () => setScanning(false),
-          reactivateTimeout
-        );
-      }
+    if (scanningRef.current || disableVibrationByUser) {
+      return;
+    }
+    if (vibrate) {
+      Vibration.vibrate();
+    }
+    setScanningValue(true);
+    onRead(e);
+    if (reactivate) {
+      scannerTimeout.current = setTimeout(
+        () => setScanningValue(false),
+        reactivateTimeout
+      );
     }
   };
 
@@ -220,19 +260,71 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
     return null;
   };
 
+  const safeCodeTypes = React.useMemo<CodeType[]>(() => {
+    const requested = codeTypes?.length ? codeTypes : SUPPORTED_CODE_TYPES;
+    const filtered = requested.filter((type) =>
+      SUPPORTED_CODE_TYPES.includes(type)
+    );
+    if (__DEV__ && filtered.length !== requested.length) {
+      const unsupported = requested.filter(
+        (type) => !SUPPORTED_CODE_TYPES.includes(type)
+      );
+      console.warn(
+        '[QRCodeScanner] Unsupported codeTypes removed:',
+        unsupported
+      );
+    }
+    return filtered.length ? filtered : (['qr'] as CodeType[]);
+  }, [codeTypes]);
+
+  const codeScanner = useCodeScanner({
+    codeTypes: safeCodeTypes,
+    onCodeScanned: (codes) => {
+      const firstCode = codes[0];
+      if (!firstCode?.value) {
+        return;
+      }
+      const bounds = firstCode.frame
+        ? {
+          origin: { x: firstCode.frame.x, y: firstCode.frame.y },
+          size: {
+            width: firstCode.frame.width,
+            height: firstCode.frame.height,
+          },
+        }
+        : undefined;
+      const cornerPoints = firstCode.corners?.map((point) => ({
+        x: point.x,
+        y: point.y,
+      }));
+      handleBarCodeRead({
+        data: firstCode.value,
+        type: firstCode.type,
+        bounds,
+        cornerPoints,
+      });
+    },
+  });
+
   const renderCameraComponent = () => {
-    const facing = cameraType === 'back' ? 'back' : 'front';
+    if (!device) {
+      return pendingAuthorizationView;
+    }
+
+    const torch = flashMode === 'torch' || flashMode === 'on' ? 'on' : 'off';
 
     return (
-      <CameraView
-        style={[styles.camera, cameraStyle]}
-        onBarcodeScanned={handleBarCodeRead}
-        facing={facing}
-        flash={flashMode}
-        {...cameraProps}
-      >
+      <View style={[styles.camera, cameraStyle]}>
+        <Camera
+          style={StyleSheet.absoluteFill}
+          {...cameraProps}
+          device={device}
+          isActive={isCameraActivated && hasPermission}
+          codeScanner={codeScanner}
+          torch={torch}
+        />
         {renderCameraMarker()}
-      </CameraView>
+      </View>
     );
   };
 
@@ -245,35 +337,39 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
       );
     }
 
-    if (isAuthorized) {
-      if (cameraTimeout > 0) {
-        timer.current && clearTimeout(timer.current);
-        timer.current = setTimeout(
-          () => setCameraValue(false),
-          cameraTimeout
-        );
-      }
-
-      if (fadeIn) {
-        return (
-          <Animated.View
-            style={{
-              opacity: fadeInOpacity,
-              backgroundColor: 'transparent',
-              height:
-                (cameraStyle && cameraStyle.height) || styles.camera.height,
-            }}
-          >
-            {renderCameraComponent()}
-          </Animated.View>
-        );
-      }
-      return renderCameraComponent();
-    } else if (!isAuthorizationChecked) {
-      return pendingAuthorizationView;
-    } else {
-      return notAuthorizedView;
+    if (!hasPermission) {
+      return isAuthorizationChecked
+        ? notAuthorizedView
+        : pendingAuthorizationView;
     }
+
+    if (!device) {
+      return pendingAuthorizationView;
+    }
+
+    if (cameraTimeout > 0) {
+      timer.current && clearTimeout(timer.current);
+      timer.current = setTimeout(
+        () => setCameraValue(false),
+        cameraTimeout
+      );
+    }
+
+    if (fadeIn) {
+      return (
+        <Animated.View
+          style={{
+            opacity: fadeInOpacity,
+            backgroundColor: 'transparent',
+            height:
+              (cameraStyle && cameraStyle.height) || styles.camera.height,
+          }}
+        >
+          {renderCameraComponent()}
+        </Animated.View>
+      );
+    }
+    return renderCameraComponent();
   };
 
   return (
