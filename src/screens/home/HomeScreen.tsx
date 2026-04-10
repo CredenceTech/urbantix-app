@@ -180,8 +180,6 @@ const HomeScreen: React.FC = () => {
         try {
             const result = await getEvent(params);
 
-            console.log(result, "Result")
-
             if (result?.success) {
                 // Extract pagination metadata from the response
                 const count = result?.data?.count ?? 0;

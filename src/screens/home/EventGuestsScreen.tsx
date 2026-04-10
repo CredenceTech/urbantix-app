@@ -10,6 +10,7 @@ import {
     Platform,
     Alert,
     TextInput,
+    TouchableOpacity,
 } from "react-native";
 import { LegendList } from "@legendapp/list";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -214,6 +215,10 @@ const EventGuestsScreen: React.FC = () => {
         dispatch(removeUser());
     };
 
+    const scanStudentPassClicked = () => {
+        navigation.navigate('SchoolQRCodeScanner', { objEvent });
+    };
+
     return (
         <View style={custome_screenContainer.view_container}>
             <Loader isLoading={isLoading} />
@@ -268,6 +273,14 @@ const EventGuestsScreen: React.FC = () => {
                                 <Text style={styles.notDataLable}>No Guests Found!</Text>
                             </View>
                         )}
+                        <View style={styles.bottomButtonContainer}>
+                            <TouchableOpacity
+                                activeOpacity={0.8}
+                                onPress={scanStudentPassClicked}
+                                style={styles.scanButton}>
+                                <Text style={styles.scanButtonText}>Scan Student Pass</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </KeyboardAvoidingView>
             </SafeAreaView>
@@ -285,6 +298,25 @@ const styles = StyleSheet.create({
         flex: 1,
         // alignItems: 'center',
         backgroundColor: background_color
+    },
+    bottomButtonContainer: {
+        paddingHorizontal: 16,
+        paddingTop: 10,
+        paddingBottom: 16,
+        backgroundColor: background_color,
+    },
+    scanButton: {
+        backgroundColor: primary_color,
+        minHeight: 52,
+        borderRadius: 12,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 16,
+    },
+    scanButtonText: {
+        color: white_color,
+        fontSize: 16,
+        fontWeight: 'bold',
     },
     notDataLable: {
         fontSize: 18,

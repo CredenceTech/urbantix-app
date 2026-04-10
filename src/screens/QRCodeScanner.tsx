@@ -3,8 +3,11 @@ import QRCodeScanner from '../components/QRCodeScanner';
 import {SafeAreaView, StyleSheet, TouchableOpacity} from 'react-native';
 import {Text} from 'react-native';
 import {eventCheckin} from '../constants/services';
+import {useRoute} from '@react-navigation/native';
 
 const QRScanner = () => {
+  const route = useRoute<any>();
+  const objEvent = route.params?.objEvent;
   const [scannedData, setScanneddata] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [failedMessage, setFailedData] = useState(null);
@@ -30,6 +33,8 @@ const QRScanner = () => {
       barcode: scannedData,
     };
     const result = await eventCheckin(params);
+
+    console.log(result, "Result")
     if (result.success) {
       setSuccessMessage(result.message);
       setVerifiedSuccessfully(true);
@@ -82,19 +87,26 @@ const QRScanner = () => {
       showMarker
       topContent={<Text style={styles.centerText}>{scannedData}</Text>}
       bottomContent={
-        <TouchableOpacity
-          style={[
-            styles.buttonTouchable,
-            {backgroundColor: alreadyScanned ? '#FFF' : null},
-          ]}>
-          <Text
+        <>
+          <TouchableOpacity
             style={[
-              styles.buttonText,
-              {color: alreadyScanned ? '#EF4040' : '#FFF'},
+              styles.buttonTouchable,
+              {backgroundColor: alreadyScanned ? '#FFF' : null},
             ]}>
-            {failedMessage}
-          </Text>
-        </TouchableOpacity>
+            <Text
+              style={[
+                styles.buttonText,
+                {color: alreadyScanned ? '#EF4040' : '#FFF'},
+              ]}>
+              {failedMessage}
+            </Text>
+          </TouchableOpacity>
+          {!objEvent && (
+            <Text style={styles.helperText}>
+              Please open event and scan from event page for student passes.
+            </Text>
+          )}
+        </>
       }
       bottomViewStyle={{
         backgroundColor: '#3E8B2B',
@@ -120,6 +132,13 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     padding: 32,
     color: '#FFF',
+  },
+  helperText: {
+    fontSize: 14,
+    paddingHorizontal: 24,
+    paddingTop: 12,
+    color: '#FFF',
+    textAlign: 'center',
   },
   buttonText: {
     fontSize: 16,

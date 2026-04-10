@@ -18,6 +18,7 @@ interface EventComponentProps {
         total_sold: number;
         total_tickets: number;
         minimum_price: number;
+        isStudentPassEnable?: number;
     };
     actionOnRow: () => void;
 }
@@ -30,7 +31,14 @@ const EventComponent: React.FC<EventComponentProps> = ({ objEvent, actionOnRow }
     return (
         <TouchableWithoutFeedback onPress={actionOnRow}>
             <View style={styles.main_view}>
-                <Text style={styles.event_title}>{objEvent.name}</Text>
+                <View style={styles.headerRow}>
+                    <Text style={styles.event_title}>{objEvent.name}</Text>
+                    {objEvent.isStudentPassEnable === 1 && (
+                        <View style={styles.studentPassBadge}>
+                            <Text style={styles.studentPassBadgeText}>Student Pass</Text>
+                        </View>
+                    )}
+                </View>
                 <Text style={styles.event_address}>{objEvent.place}</Text>
                 <Text style={styles.event_datetime}>
                     {moment(objEvent.start_date).format('dddd MMMM D, YYYY hh:mm a')}
@@ -59,11 +67,31 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         backgroundColor: black_color,
     },
+    headerRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        columnGap: 12,
+    },
     event_title: {
-        paddingVertical: 2,
+        paddingVertical: 0,
         fontSize: 24,
+        lineHeight: 28,
         fontWeight: "bold",
         color: white_color,
+        flex: 1,
+    },
+    studentPassBadge: {
+        backgroundColor: '#3E8B2B',
+        borderRadius: 999,
+        paddingHorizontal: 8,
+        paddingVertical: 3,
+        alignSelf: 'center',
+    },
+    studentPassBadgeText: {
+        color: white_color,
+        fontSize: 10,
+        fontWeight: 'bold',
     },
     event_address: {
         paddingVertical: 2,

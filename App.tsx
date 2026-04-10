@@ -24,6 +24,7 @@ import { primary_color } from './src/constants/custome_colors';
 import HomePage from './src/screens/home/HomePage';
 import Orders from './src/screens/home/Orders';
 import QRScanner from './src/screens/QRCodeScanner';
+import SchoolQRCodeScanner from './src/screens/SchoolQRCodeScanner';
 import { PersistGate } from 'redux-persist/integration/react';
 import persistStore from 'redux-persist/es/persistStore';
 import OnBoardingScreen from './src/screens/OnBoardingScreen';
@@ -51,6 +52,7 @@ function App() {
               <Stack.Screen name="Home" component={HomePage} />
               <Stack.Screen name="Orders" component={Orders} />
               <Stack.Screen name="CheckIn" component={QRScanner} />
+              <Stack.Screen name="SchoolQRCodeScanner" component={SchoolQRCodeScanner} />
               <Stack.Screen name="CommonWebView" component={CommonWebView} />
             </Stack.Navigator>
           </NavigationContainer>
