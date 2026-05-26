@@ -41,7 +41,9 @@
       "googleServicesFile": "./google-services.json",
       "permissions": [
         "CAMERA",
-        "VIBRATE"
+        "VIBRATE",
+        "POST_NOTIFICATIONS",
+        "SYSTEM_ALERT_WINDOW"
       ],
       "splash": {
         "image": "./assets/splash_screen_large.png",

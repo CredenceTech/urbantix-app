@@ -29,6 +29,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import persistStore from 'redux-persist/es/persistStore';
 import OnBoardingScreen from './src/screens/OnBoardingScreen';
 import { navigationRef } from './src/constants/root_navigation';
+import HardwareScannerBootstrap from './src/components/HardwareScannerBootstrap';
 
 const Stack = createNativeStackNavigator();
 
@@ -43,6 +44,7 @@ function App() {
             theme={MyTheme}
             ref={navigationRef}
           >
+            <HardwareScannerBootstrap />
             <Stack.Navigator screenOptions={headerStyle} >
               <Stack.Screen name="SplashScreen" component={SplashScreen} />
               <Stack.Screen name="OnBoardingScreen" options={{ headerShown: false }} component={OnBoardingScreen} />

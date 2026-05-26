@@ -4,10 +4,22 @@ import {SafeAreaView, StyleSheet, TouchableOpacity} from 'react-native';
 import {Text} from 'react-native';
 import {eventCheckin} from '../constants/services';
 import {useRoute} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
+import {baseURL} from '../constants/api_constants';
+import type {HardwareScannerResult} from '../../modules/urbantix-hardware-scanner';
+import {
+  addHardwareScannerAppStateListener,
+  addHardwareScannerListener,
+  configureHardwareScannerSession,
+  consumePendingHardwareScannerResult,
+  ensureHardwareScannerNotificationPermission,
+} from '../utils/hardwareScanner';
 
 const QRScanner = () => {
   const route = useRoute<any>();
   const objEvent = route.params?.objEvent;
+  const hardwareResult = route.params?.hardwareResult;
+  const authentication = useSelector((state: any) => state.authentication);
   const [scannedData, setScanneddata] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [failedMessage, setFailedData] = useState(null);
@@ -28,18 +40,59 @@ const QRScanner = () => {
     return () => clearTimeout(timer);
   }, [resetSuccess]);
 
-  const barCodeCheckIn = async () => {
-    const params = {
-      barcode: scannedData,
-    };
-    const result = await eventCheckin(params);
-
-    console.log(result, "Result")
+  const handleScanResult = (result: HardwareScannerResult) => {
+    setScanneddata(result.scannedCode);
     if (result.success) {
       setSuccessMessage(result.message);
       setVerifiedSuccessfully(true);
+      setAlreadyScanned(false);
+      setFailedData(null);
     } else {
       setFailedData(result.message);
+      setAlreadyScanned(true);
+      setResetSuccess(true);
+    }
+  };
+
+  useEffect(() => {
+    if (hardwareResult?.scannedCode) {
+      handleScanResult(hardwareResult);
+    }
+  }, [hardwareResult?.processedAt]);
+
+  useEffect(() => {
+    ensureHardwareScannerNotificationPermission();
+
+    configureHardwareScannerSession({
+      authToken: authentication?.user?.access_token || '',
+      baseUrl: baseURL,
+      mode: 'ticket',
+    });
+
+    consumePendingHardwareScannerResult(handleScanResult);
+
+    const scanSubscription = addHardwareScannerListener(handleScanResult);
+    const appStateSubscription = addHardwareScannerAppStateListener(
+      handleScanResult
+    );
+
+    return () => {
+      scanSubscription.remove();
+      appStateSubscription.remove();
+    };
+  }, [authentication?.user?.access_token]);
+
+  const barCodeCheckIn = async (barcode: string) => {
+    const params = {
+      barcode,
+    };
+    const result = await eventCheckin(params);
+
+    if (result?.success) {
+      setSuccessMessage(result.message);
+      setVerifiedSuccessfully(true);
+    } else {
+      setFailedData(result?.message || 'Ticket check-in failed.');
       setAlreadyScanned(true);
       setResetSuccess(true);
     }
@@ -76,9 +129,10 @@ const QRScanner = () => {
   ) : (
     <QRCodeScanner
       onRead={(data: {data: any}) => {
-        setScanneddata(data.data);
-        if (data) {
-          barCodeCheckIn();
+        const barcode = data?.data;
+        setScanneddata(barcode);
+        if (barcode) {
+          barCodeCheckIn(barcode);
         }
       }}
       flashMode={'off'}
