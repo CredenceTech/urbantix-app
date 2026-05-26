@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import QRCodeScanner from '../components/QRCodeScanner';
-import {SafeAreaView, StyleSheet, TouchableOpacity} from 'react-native';
+import {SafeAreaView, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Text} from 'react-native';
 import {eventCheckin} from '../constants/services';
 import {useRoute} from '@react-navigation/native';
@@ -139,31 +139,47 @@ const QRScanner = () => {
       reactivate={true}
       // reactivateTimeout={500}
       showMarker
-      topContent={<Text style={styles.centerText}>{scannedData}</Text>}
-      bottomContent={
-        <>
-          <TouchableOpacity
-            style={[
-              styles.buttonTouchable,
-              {backgroundColor: alreadyScanned ? '#FFF' : null},
-            ]}>
-            <Text
-              style={[
-                styles.buttonText,
-                {color: alreadyScanned ? '#EF4040' : '#FFF'},
-              ]}>
-              {failedMessage}
-            </Text>
-          </TouchableOpacity>
-          {!objEvent && (
-            <Text style={styles.helperText}>
-              Please open event and scan from event page for student passes.
-            </Text>
-          )}
-        </>
+      cameraStyle={styles.cameraFrame}
+      topContent={
+        <View style={styles.topContentContainer}>
+          <Text numberOfLines={2} style={styles.centerText}>
+            {scannedData}
+          </Text>
+        </View>
       }
+      bottomContent={
+        <View style={styles.bottomContentContainer}>
+          <View style={styles.messageRow}>
+            {!!failedMessage && (
+              <TouchableOpacity
+                style={[
+                  styles.buttonTouchable,
+                  {backgroundColor: alreadyScanned ? '#FFF' : 'transparent'},
+                ]}>
+                <Text
+                  style={[
+                    styles.buttonText,
+                    {color: alreadyScanned ? '#EF4040' : '#FFF'},
+                  ]}>
+                  {failedMessage}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+          {!objEvent && (
+            <View style={styles.helperTextContainer}>
+              <Text style={styles.helperText}>
+                Please open event and scan from event page for student passes.
+              </Text>
+            </View>
+          )}
+        </View>
+      }
+      cameraContainerStyle={styles.cameraSection}
       bottomViewStyle={{
         backgroundColor: '#3E8B2B',
+        minHeight: 145,
+        justifyContent: 'flex-start',
       }}
       markerStyle={{
         borderColor: '#3E8B2B',
@@ -172,6 +188,7 @@ const QRScanner = () => {
       topViewStyle={{
         backgroundColor: '#3E8B2B',
         color: '#FFF',
+        minHeight: 96,
       }}
     />
   );
@@ -180,26 +197,71 @@ const QRScanner = () => {
 export default QRScanner;
 
 const styles = StyleSheet.create({
-  centerText: {
+  topContentContainer: {
     flex: 1,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    paddingBottom: 10,
+    minHeight: 56,
+  },
+  centerText: {
     fontSize: 18,
     fontWeight: '500',
-    padding: 32,
-    color: '#FFF',
-  },
-  helperText: {
-    fontSize: 14,
-    paddingHorizontal: 24,
-    paddingTop: 12,
     color: '#FFF',
     textAlign: 'center',
+    width: '100%',
+  },
+  cameraSection: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  cameraFrame: {
+    width: '100%',
+    height: 320,
+  },
+  bottomContentContainer: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    paddingBottom: 14,
+    minHeight: 98,
+  },
+  messageRow: {
+    minHeight: 36,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+  helperTextContainer: {
+    width: '100%',
+    minHeight: 34,
+    justifyContent: 'flex-start',
+    marginTop: 'auto',
+    paddingTop: 16,
+  },
+  helperText: {
+    fontSize: 13,
+    color: '#FFF',
+    textAlign: 'center',
+    lineHeight: 18,
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: 14,
+    textAlign: 'center',
   },
   buttonTouchable: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 5,
+    maxWidth: '76%',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

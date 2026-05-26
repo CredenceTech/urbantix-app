@@ -43,7 +43,8 @@
         "CAMERA",
         "VIBRATE",
         "POST_NOTIFICATIONS",
-        "SYSTEM_ALERT_WINDOW"
+        "SYSTEM_ALERT_WINDOW",
+        "android.permission.CAMERA"
       ],
       "splash": {
         "image": "./assets/splash_screen_large.png",
@@ -61,13 +62,12 @@
       ],
       "./plugins/withFullScreenBootsplash.js",
       "./plugins/withUrbantixsKeystore.js",
-      "expo-build-properties",
       [
-        "react-native-vision-camera",
+        "expo-build-properties",
         {
-          "cameraPermissionText": "UrbanTixs uses the camera to scan QR codes on your event tickets for fast check-in at venues. No photos are stored or shared.",
-          "enableMicrophonePermission": false,
-          "enableCodeScanner": true
+          "ios": {
+            "deploymentTarget": "16.0"
+          }
         }
       ]
     ]

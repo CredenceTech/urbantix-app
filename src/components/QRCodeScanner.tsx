@@ -11,15 +11,32 @@ import {
 } from 'react-native';
 import {
   Camera,
-  type CodeType,
   useCameraDevice,
   useCameraPermission,
-  useCodeScanner,
 } from 'react-native-vision-camera';
+import {
+  useBarcodeScannerOutput,
+  type Barcode,
+  type TargetBarcodeFormat,
+} from 'react-native-vision-camera-barcode-scanner';
 
 type FlashMode = 'off' | 'on' | 'auto' | 'torch';
+type ScannerCodeType =
+  | 'qr'
+  | 'pdf-417'
+  | 'code-128'
+  | 'code-39'
+  | 'code-93'
+  | 'codabar'
+  | 'ean-13'
+  | 'ean-8'
+  | 'upc-a'
+  | 'upc-e'
+  | 'itf'
+  | 'aztec'
+  | 'data-matrix';
 
-const SUPPORTED_CODE_TYPES: CodeType[] = [
+const SUPPORTED_CODE_TYPES: ScannerCodeType[] = [
   'qr',
   'pdf-417',
   'code-128',
@@ -34,6 +51,22 @@ const SUPPORTED_CODE_TYPES: CodeType[] = [
   'aztec',
   'data-matrix',
 ];
+
+const BARCODE_FORMAT_MAP: Record<ScannerCodeType, TargetBarcodeFormat> = {
+  qr: 'qr-code',
+  'pdf-417': 'pdf-417',
+  'code-128': 'code-128',
+  'code-39': 'code-39',
+  'code-93': 'code-93',
+  codabar: 'codabar',
+  'ean-13': 'ean-13',
+  'ean-8': 'ean-8',
+  'upc-a': 'upc-a',
+  'upc-e': 'upc-e',
+  itf: 'itf',
+  aztec: 'aztec',
+  'data-matrix': 'data-matrix',
+};
 
 type QRCodeScannerProps = {
   onRead: (data: any) => void;
@@ -56,7 +89,7 @@ type QRCodeScannerProps = {
   notAuthorizedView?: React.ReactElement;
   pendingAuthorizationView?: React.ReactElement;
   flashMode?: FlashMode;
-  codeTypes?: CodeType[];
+  codeTypes?: ScannerCodeType[];
   cameraProps?: Record<string, any>;
   cameraTimeoutView?: React.ReactElement;
 };
@@ -133,7 +166,6 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
   cameraContainerStyle,
   bottomViewStyle,
 }) => {
-  const [scanning, setScanning] = useState(false);
   const [isCameraActivated, setCameraActivated] = useState(true);
   const fadeInOpacity = useRef(new Animated.Value(0)).current;
   const [isAuthorizationChecked, setAuthorizationChecked] = useState(false);
@@ -143,6 +175,7 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
   const scanningRef = useRef(false);
   const { hasPermission, requestPermission } = useCameraPermission();
   const device = useCameraDevice(cameraType);
+  const flattenedCameraStyle = StyleSheet.flatten(cameraStyle) || {};
 
   useEffect(() => {
     if (fadeIn) {
@@ -180,17 +213,8 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
     };
   }, [hasPermission, requestPermission]);
 
-  const disable = () => {
-    setDisableVibrationByUser(true);
-  };
-
-  const enable = () => {
-    setDisableVibrationByUser(false);
-  };
-
   const setScanningValue = (value: boolean) => {
     scanningRef.current = value;
-    setScanning(value);
   };
 
   const setCameraValue = (value: boolean) => {
@@ -208,6 +232,17 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
       ]).start();
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (scannerTimeout.current) {
+        clearTimeout(scannerTimeout.current);
+      }
+      if (timer.current) {
+        clearTimeout(timer.current);
+      }
+    };
+  }, []);
 
   const handleBarCodeRead = (e: any) => {
     if (scanningRef.current || disableVibrationByUser) {
@@ -260,50 +295,61 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
     return null;
   };
 
-  const safeCodeTypes = React.useMemo<CodeType[]>(() => {
-    const requested = codeTypes?.length ? codeTypes : SUPPORTED_CODE_TYPES;
+  const targetBarcodeFormats = React.useMemo<TargetBarcodeFormat[]>(() => {
+    const requested = Array.isArray(codeTypes) && codeTypes.length
+      ? codeTypes
+      : SUPPORTED_CODE_TYPES;
     const filtered = requested.filter((type) =>
-      SUPPORTED_CODE_TYPES.includes(type)
+      SUPPORTED_CODE_TYPES.includes(type as ScannerCodeType)
     );
     if (__DEV__ && filtered.length !== requested.length) {
       const unsupported = requested.filter(
-        (type) => !SUPPORTED_CODE_TYPES.includes(type)
+        (type) => !SUPPORTED_CODE_TYPES.includes(type as ScannerCodeType)
       );
       console.warn(
         '[QRCodeScanner] Unsupported codeTypes removed:',
         unsupported
       );
     }
-    return filtered.length ? filtered : (['qr'] as CodeType[]);
+    const supportedFormats = filtered.map((type) => BARCODE_FORMAT_MAP[type]);
+    return supportedFormats.length ? supportedFormats : ['qr-code'];
   }, [codeTypes]);
 
-  const codeScanner = useCodeScanner({
-    codeTypes: safeCodeTypes,
-    onCodeScanned: (codes) => {
-      const firstCode = codes[0];
-      if (!firstCode?.value) {
+  const barcodeOutput = useBarcodeScannerOutput({
+    barcodeFormats: targetBarcodeFormats,
+    onBarcodeScanned: (barcodes: Barcode[]) => {
+      const firstBarcode = barcodes[0];
+      const value = firstBarcode?.rawValue ?? firstBarcode?.displayValue;
+
+      if (!value) {
         return;
       }
-      const bounds = firstCode.frame
+
+      const bounds = firstBarcode.boundingBox
         ? {
-          origin: { x: firstCode.frame.x, y: firstCode.frame.y },
+          origin: {
+            x: firstBarcode.boundingBox.left,
+            y: firstBarcode.boundingBox.top,
+          },
           size: {
-            width: firstCode.frame.width,
-            height: firstCode.frame.height,
+            width: firstBarcode.boundingBox.right - firstBarcode.boundingBox.left,
+            height: firstBarcode.boundingBox.bottom - firstBarcode.boundingBox.top,
           },
         }
         : undefined;
-      const cornerPoints = firstCode.corners?.map((point) => ({
+      const cornerPoints = firstBarcode.cornerPoints?.map((point) => ({
         x: point.x,
         y: point.y,
       }));
+
       handleBarCodeRead({
-        data: firstCode.value,
-        type: firstCode.type,
+        data: value,
+        type: firstBarcode.format,
         bounds,
         cornerPoints,
       });
     },
+    onError: () => {},
   });
 
   const renderCameraComponent = () => {
@@ -314,14 +360,14 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
     const torch = flashMode === 'torch' || flashMode === 'on' ? 'on' : 'off';
 
     return (
-      <View style={[styles.camera, cameraStyle]}>
+      <View style={[styles.camera, flattenedCameraStyle]}>
         <Camera
           style={StyleSheet.absoluteFill}
           {...cameraProps}
           device={device}
           isActive={isCameraActivated && hasPermission}
-          codeScanner={codeScanner}
-          torch={torch}
+          outputs={[barcodeOutput]}
+          torchMode={torch}
         />
         {renderCameraMarker()}
       </View>
@@ -361,8 +407,11 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
           style={{
             opacity: fadeInOpacity,
             backgroundColor: 'transparent',
+            width: flattenedCameraStyle.width || '100%',
             height:
-              (cameraStyle && cameraStyle.height) || styles.camera.height,
+              flattenedCameraStyle.height || styles.camera.height,
+            alignSelf: 'stretch',
+            overflow: 'hidden',
           }}
         >
           {renderCameraComponent()}
@@ -377,7 +426,9 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
       <View style={[styles.infoView, topViewStyle]}>
         {renderTopContent()}
       </View>
-      <View style={cameraContainerStyle}>{renderCamera()}</View>
+      <View style={[styles.cameraContainer, cameraContainerStyle]}>
+        {renderCamera()}
+      </View>
       <View style={[styles.infoView, bottomViewStyle]}>
         {renderBottomContent()}
       </View>
@@ -390,10 +441,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   infoView: {
-    flex: 2,
+    minHeight: 110,
     justifyContent: 'center',
     alignItems: 'center',
-    width: Dimensions.get('window').width,
+    width: '100%',
+  },
+
+  cameraContainer: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
   },
 
   camera: {
@@ -401,8 +459,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'transparent',
-    height: Dimensions.get('window').width,
-    width: Dimensions.get('window').width,
+    width: '100%',
+    height: 300,
+    overflow: 'hidden',
   },
 
   rectangleContainer: {
