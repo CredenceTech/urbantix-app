@@ -112,29 +112,38 @@ const SchoolQRCodeScanner = () => {
             flashMode={'off'}
             reactivate={true}
             showMarker
+            cameraStyle={styles.cameraFrame}
+            cameraContainerStyle={styles.cameraSection}
             topContent={
-              <View>
+              <View style={styles.topContentContainer}>
                 <Text style={styles.centerText}>Student Pass Scanner</Text>
                 <Text style={styles.subText}>{scannedData}</Text>
               </View>
             }
             bottomContent={
-              <TouchableOpacity
-                style={[
-                  styles.buttonTouchable,
-                  { backgroundColor: alreadyScanned ? '#FFF' : 'transparent' },
-                ]}>
-                <Text
-                  style={[
-                    styles.buttonText,
-                    { color: alreadyScanned ? '#EF4040' : white_color },
-                  ]}>
-                  {failedMessage || 'Scan student QR code'}
-                </Text>
-              </TouchableOpacity>
+              <View style={styles.bottomContentContainer}>
+                <View style={styles.messageRow}>
+                  <TouchableOpacity
+                    style={[
+                      styles.buttonTouchable,
+                      { backgroundColor: alreadyScanned ? '#FFF' : 'transparent' },
+                    ]}>
+                    <Text
+                      style={[
+                        styles.buttonText,
+                        { color: alreadyScanned ? '#EF4040' : white_color },
+                      ]}>
+                      {failedMessage || 'Scan student QR code'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
             }
             bottomViewStyle={{
               backgroundColor: primary_color,
+              minHeight: 145,
+              justifyContent: 'flex-start',
+              alignItems: 'stretch',
             }}
             markerStyle={{
               borderColor: primary_color,
@@ -142,6 +151,7 @@ const SchoolQRCodeScanner = () => {
             }}
             topViewStyle={{
               backgroundColor: primary_color,
+              minHeight: 96,
             }}
           />
         )}
@@ -185,25 +195,61 @@ const styles = StyleSheet.create({
   centerText: {
     fontSize: 18,
     fontWeight: '500',
-    paddingTop: 24,
-    paddingHorizontal: 24,
     color: '#FFF',
     textAlign: 'center',
   },
   subText: {
     fontSize: 14,
-    paddingHorizontal: 24,
-    paddingBottom: 12,
     color: '#FFF',
     textAlign: 'center',
   },
+  topContentContainer: {
+    flex: 1,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    paddingBottom: 10,
+    minHeight: 56,
+  },
+  cameraSection: {
+    flex: 1,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  cameraFrame: {
+    width: '100%',
+    height: '100%',
+  },
+  bottomContentContainer: {
+    flex: 1,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    paddingBottom: 8,
+    minHeight: 98,
+  },
+  messageRow: {
+    minHeight: 36,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
   buttonText: {
-    fontSize: 16,
+    fontSize: 14,
+    textAlign: 'center',
   },
   buttonTouchable: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 5,
+    maxWidth: '76%',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 4,
+    alignItems: 'center',
   },
 });
 
