@@ -12,6 +12,7 @@ import {
   configureHardwareScannerSession,
   consumePendingHardwareScannerResult,
   ensureHardwareScannerNotificationPermission,
+  isHardwareScannerSupported,
   openHardwareScannerOverlaySettings,
   setHardwareScannerAppInForeground,
   startHardwareScannerService,
@@ -42,9 +43,12 @@ const HardwareScannerBootstrap = () => {
       return;
     }
 
-    ensureHardwareScannerNotificationPermission();
-
     const promptForOverlayPermission = () => {
+      if (!isHardwareScannerSupported()) {
+        setShowOverlayPermissionPrompt(false);
+        return;
+      }
+
       if (canDrawHardwareScannerOverlay()) {
         setShowOverlayPermissionPrompt(false);
         return;
@@ -61,7 +65,11 @@ const HardwareScannerBootstrap = () => {
       mode: 'ticket',
     });
     setHardwareScannerAppInForeground(true);
-    startHardwareScannerService();
+
+    if (isHardwareScannerSupported()) {
+      ensureHardwareScannerNotificationPermission();
+      startHardwareScannerService();
+    }
 
     const handleGlobalScanResult = (result: HardwareScannerResult) => {
       try {
@@ -79,6 +87,7 @@ const HardwareScannerBootstrap = () => {
       }
 
       setModalResult(result);
+      promptForOverlayPermission();
     };
 
     consumePendingHardwareScannerResult(handleGlobalScanResult);

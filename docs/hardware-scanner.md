@@ -58,11 +58,10 @@ Student pass support still exists in the app, but it is not part of the shared h
 
 After login, [HardwareScannerBootstrap.tsx](/Users/prahlad/Work/urbantix-app/src/components/HardwareScannerBootstrap.tsx):
 
-- requests notification permission
-- checks overlay permission
 - configures a native scanner session in `ticket` mode
 - marks whether the app is foregrounded
-- starts the Android foreground service
+- always attaches foreground scan listeners
+- only starts the Android foreground service on confirmed/supported scanner devices
 
 Saved session data includes:
 
@@ -71,6 +70,27 @@ Saved session data includes:
 - `mode`
 
 For the shared hardware flow, `mode` is currently always `ticket`.
+
+## Supported device behavior
+
+The app now supports both:
+
+- rugged Android scanner devices
+- normal Android phones without scanner hardware
+
+How it works:
+
+- the runtime foreground receiver is always available on Android
+- normal phones do not receive scanner broadcasts, so they continue using camera QR scanning only
+- scanner devices are considered hardware-supported when either:
+  - the device matches a known rugged-scanner vendor hint, or
+  - the app receives a real hardware scan in foreground and confirms support natively
+
+After the first successful foreground hardware scan on a scanner device:
+
+- the device is marked as hardware-scanner capable
+- the scanner foreground service is started
+- background and killed-state scanner handling becomes available
 
 ## 2. Scan result broadcast arrives
 
@@ -96,6 +116,8 @@ It only processes scans when:
 Handled by the foreground service receiver in [UrbantixHardwareScannerService.kt](/Users/prahlad/Work/urbantix-app/modules/urbantix-hardware-scanner/android/src/main/java/expo/modules/urbantixhardwarescanner/UrbantixHardwareScannerService.kt).
 
 The service stays alive after the app UI is closed, as long as the user still has an active logged-in session.
+
+On scanner devices, this service is started after hardware support is confirmed.
 
 ### Killed or no active service
 
@@ -194,17 +216,39 @@ Permission:
 
 - `SYSTEM_ALERT_WINDOW`
 
-The app prompts for this using the themed modal in [HardwareScannerBootstrap.tsx](/Users/prahlad/Work/urbantix-app/src/components/HardwareScannerBootstrap.tsx). Tapping `Open Settings` sends the user to Android overlay permission settings.
+The app prompts for this using the themed modal in [HardwareScannerBootstrap.tsx](/Users/prahlad/Work/urbantix-app/src/components/HardwareScannerBootstrap.tsx).
+
+Prompt behavior:
+
+- normal Android phones: no overlay prompt
+- scanner devices: prompt appears after hardware support is confirmed, typically right after the first foreground hardware scan
+
+Tapping `Open Settings` sends the user to Android overlay permission settings.
+
+## Foreground service permissions
+
+Configured in [AndroidManifest.xml](/Users/prahlad/Work/urbantix-app/modules/urbantix-hardware-scanner/android/src/main/AndroidManifest.xml):
+
+- `FOREGROUND_SERVICE`
+- `FOREGROUND_SERVICE_DATA_SYNC`
+
+These are required for the background scanner service on newer Android versions / higher target SDKs.
 
 ## Service lifecycle
 
-The hardware scanner foreground service is started when a logged-in session exists.
+The hardware scanner foreground service is started only when the device is confirmed/supported for hardware scanning.
 
 Important behavior:
 
 - the service is not stopped during normal React component cleanup
 - this is required so killed-state scanning keeps working
 - the service is stopped when there is no authenticated user token
+
+On normal Android phones without scanner hardware:
+
+- the service is not started
+- overlay prompts are not shown
+- camera QR scanning remains the active scan path
 
 This logic lives in [HardwareScannerBootstrap.tsx](/Users/prahlad/Work/urbantix-app/src/components/HardwareScannerBootstrap.tsx).
 

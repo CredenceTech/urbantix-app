@@ -6,7 +6,12 @@ import type {
 } from '../../modules/urbantix-hardware-scanner';
 
 export async function ensureHardwareScannerNotificationPermission() {
-  if (Platform.OS !== 'android' || Platform.Version < 33) {
+  if (
+    Platform.OS !== 'android' ||
+    Platform.Version < 33 ||
+    !UrbantixHardwareScanner.isAvailable ||
+    !UrbantixHardwareScanner.isHardwareScannerSupported()
+  ) {
     return true;
   }
 
@@ -16,8 +21,20 @@ export async function ensureHardwareScannerNotificationPermission() {
   return result === PermissionsAndroid.RESULTS.GRANTED;
 }
 
-export function canDrawHardwareScannerOverlay() {
+export function isHardwareScannerSupported() {
   if (Platform.OS !== 'android' || !UrbantixHardwareScanner.isAvailable) {
+    return false;
+  }
+
+  return UrbantixHardwareScanner.isHardwareScannerSupported();
+}
+
+export function canDrawHardwareScannerOverlay() {
+  if (
+    Platform.OS !== 'android' ||
+    !UrbantixHardwareScanner.isAvailable ||
+    !UrbantixHardwareScanner.isHardwareScannerSupported()
+  ) {
     return false;
   }
 
@@ -25,7 +42,11 @@ export function canDrawHardwareScannerOverlay() {
 }
 
 export function openHardwareScannerOverlaySettings() {
-  if (Platform.OS !== 'android' || !UrbantixHardwareScanner.isAvailable) {
+  if (
+    Platform.OS !== 'android' ||
+    !UrbantixHardwareScanner.isAvailable ||
+    !UrbantixHardwareScanner.isHardwareScannerSupported()
+  ) {
     return;
   }
 
@@ -50,14 +71,20 @@ export async function configureHardwareScannerSession(
 }
 
 export function startHardwareScannerService() {
-  if (!UrbantixHardwareScanner.isAvailable) {
+  if (
+    !UrbantixHardwareScanner.isAvailable ||
+    !UrbantixHardwareScanner.isHardwareScannerSupported()
+  ) {
     return;
   }
   UrbantixHardwareScanner.startScannerService();
 }
 
 export function stopHardwareScannerService() {
-  if (!UrbantixHardwareScanner.isAvailable) {
+  if (
+    !UrbantixHardwareScanner.isAvailable ||
+    !UrbantixHardwareScanner.isHardwareScannerSupported()
+  ) {
     return;
   }
   UrbantixHardwareScanner.stopScannerService();
@@ -66,6 +93,12 @@ export function stopHardwareScannerService() {
 export function addHardwareScannerListener(
   listener: (result: HardwareScannerResult) => void
 ) {
+  if (!UrbantixHardwareScanner.isAvailable) {
+    return {
+      remove() {},
+    };
+  }
+
   return UrbantixHardwareScanner.addScanResultListener((result) => {
     listener(result);
     UrbantixHardwareScanner.clearPendingScanResult();

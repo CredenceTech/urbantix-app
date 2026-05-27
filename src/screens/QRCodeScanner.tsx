@@ -180,6 +180,7 @@ const QRScanner = () => {
         backgroundColor: '#3E8B2B',
         minHeight: 145,
         justifyContent: 'flex-start',
+        alignItems: 'stretch',
       }}
       markerStyle={{
         borderColor: '#3E8B2B',
@@ -215,6 +216,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   cameraSection: {
+    flex: 1,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
@@ -222,15 +224,16 @@ const styles = StyleSheet.create({
   },
   cameraFrame: {
     width: '100%',
-    height: 320,
+    height: '100%',
   },
   bottomContentContainer: {
+    flex: 1,
     width: '100%',
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingTop: 10,
-    paddingBottom: 14,
+    paddingBottom: 8,
     minHeight: 98,
   },
   messageRow: {
@@ -241,10 +244,8 @@ const styles = StyleSheet.create({
   },
   helperTextContainer: {
     width: '100%',
-    minHeight: 34,
-    justifyContent: 'flex-start',
-    marginTop: 'auto',
-    paddingTop: 16,
+    minHeight: 24,
+    justifyContent: 'flex-end',
   },
   helperText: {
     fontSize: 13,

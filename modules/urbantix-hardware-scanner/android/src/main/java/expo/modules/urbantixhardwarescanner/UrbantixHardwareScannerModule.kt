@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Build
 import android.provider.Settings
@@ -35,6 +36,9 @@ class UrbantixHardwareScannerModule : Module() {
       if (scannedCode.isNullOrEmpty()) {
         return
       }
+
+      UrbantixHardwareScannerStore.saveHardwareScannerConfirmed(context.applicationContext)
+      UrbantixHardwareScannerServiceStarter.start(context.applicationContext)
 
       UrbantixHardwareScannerProcessor.processScanAsync(
         context = context.applicationContext,
@@ -77,25 +81,36 @@ class UrbantixHardwareScannerModule : Module() {
     }
 
     Function("startScan") {
+      if (!UrbantixHardwareScannerSupport.isHardwareScannerSupported(context)) {
+        return@Function null
+      }
       context.sendBroadcast(Intent(UrbantixHardwareScannerConstants.SCAN_DOWN_ACTION))
+      null
     }
 
     Function("stopScan") {
+      if (!UrbantixHardwareScannerSupport.isHardwareScannerSupported(context)) {
+        return@Function null
+      }
       context.sendBroadcast(Intent(UrbantixHardwareScannerConstants.SCAN_UP_ACTION))
+      null
     }
 
     Function("startScannerService") {
-      val serviceIntent = Intent(context, UrbantixHardwareScannerService::class.java)
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        context.startForegroundService(serviceIntent)
-      } else {
-        context.startService(serviceIntent)
+      if (!UrbantixHardwareScannerSupport.isHardwareScannerSupported(context)) {
+        return@Function null
       }
+      UrbantixHardwareScannerServiceStarter.start(context)
+      null
     }
 
     Function("stopScannerService") {
       val serviceIntent = Intent(context, UrbantixHardwareScannerService::class.java)
       context.stopService(serviceIntent)
+    }
+
+    Function("isHardwareScannerSupported") {
+      UrbantixHardwareScannerSupport.isHardwareScannerSupported(context)
     }
 
     Function("canDrawOverlays") {
@@ -147,7 +162,16 @@ class UrbantixHardwareScannerModule : Module() {
       return
     }
     val filter = IntentFilter(UrbantixHardwareScannerConstants.RESULT_ACTION)
-    context.applicationContext.registerReceiver(runtimeReceiver, filter)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      context.applicationContext.registerReceiver(
+        runtimeReceiver,
+        filter,
+        Context.RECEIVER_EXPORTED
+      )
+    } else {
+      @Suppress("DEPRECATION")
+      context.applicationContext.registerReceiver(runtimeReceiver, filter)
+    }
     runtimeReceiverRegistered = true
   }
 
@@ -166,6 +190,7 @@ internal object UrbantixHardwareScannerConstants {
   const val MODULE_NAME = "UrbantixHardwareScanner"
   const val PREFS_NAME = "UrbantixHardwareScannerPrefs"
   const val SESSION_KEY = "session"
+  const val HARDWARE_CONFIRMED_KEY = "hardware_confirmed"
   const val PENDING_RESULT_KEY = "pending_result"
   const val NOTIFICATION_CHANNEL_ID = "urbantix_hardware_scanner"
   const val NOTIFICATION_CHANNEL_NAME = "Hardware Scanner"
@@ -229,4 +254,70 @@ internal data class HardwareScannerResultPayload(
     "source" to source,
     "processedAt" to processedAt.toDouble()
   )
+}
+
+internal object UrbantixHardwareScannerSupport {
+  private val scannerVendorHints = listOf(
+    "urovo",
+    "zebra",
+    "chainway",
+    "newland",
+    "idata",
+    "sunmi"
+  )
+
+  fun isHardwareScannerSupported(context: Context): Boolean {
+    if (UrbantixHardwareScannerStore.isHardwareScannerConfirmed(context)) {
+      return true
+    }
+
+    if (matchesKnownScannerVendor()) {
+      return true
+    }
+
+    val packageManager = context.packageManager ?: return false
+    val scanIntent = Intent(UrbantixHardwareScannerConstants.SCAN_DOWN_ACTION)
+
+    return queryBroadcastReceivers(packageManager, scanIntent)
+  }
+
+  private fun matchesKnownScannerVendor(): Boolean {
+    val fingerprint = listOf(
+      Build.MANUFACTURER,
+      Build.BRAND,
+      Build.MODEL,
+      Build.DEVICE
+    )
+      .filterNotNull()
+      .joinToString(" ")
+      .lowercase()
+
+    return scannerVendorHints.any { hint -> fingerprint.contains(hint) }
+  }
+
+  private fun queryBroadcastReceivers(
+    packageManager: PackageManager,
+    intent: Intent
+  ): Boolean {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      packageManager.queryBroadcastReceivers(
+        intent,
+        PackageManager.ResolveInfoFlags.of(0)
+      ).isNotEmpty()
+    } else {
+      @Suppress("DEPRECATION")
+      packageManager.queryBroadcastReceivers(intent, 0).isNotEmpty()
+    }
+  }
+}
+
+internal object UrbantixHardwareScannerServiceStarter {
+  fun start(context: Context) {
+    val serviceIntent = Intent(context, UrbantixHardwareScannerService::class.java)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      context.startForegroundService(serviceIntent)
+    } else {
+      context.startService(serviceIntent)
+    }
+  }
 }

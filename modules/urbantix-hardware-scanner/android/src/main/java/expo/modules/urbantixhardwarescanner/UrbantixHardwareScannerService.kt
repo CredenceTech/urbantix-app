@@ -39,6 +39,10 @@ class UrbantixHardwareScannerService : Service() {
 
   override fun onCreate() {
     super.onCreate()
+    if (!UrbantixHardwareScannerSupport.isHardwareScannerSupported(applicationContext)) {
+      stopSelf()
+      return
+    }
     UrbantixHardwareScannerRuntimeState.isScannerServiceActive = true
     startForeground(
       UrbantixHardwareScannerConstants.SERVICE_NOTIFICATION_ID,
@@ -64,7 +68,16 @@ class UrbantixHardwareScannerService : Service() {
       return
     }
     val filter = IntentFilter(UrbantixHardwareScannerConstants.RESULT_ACTION)
-    applicationContext.registerReceiver(serviceReceiver, filter)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      applicationContext.registerReceiver(
+        serviceReceiver,
+        filter,
+        Context.RECEIVER_EXPORTED
+      )
+    } else {
+      @Suppress("DEPRECATION")
+      applicationContext.registerReceiver(serviceReceiver, filter)
+    }
     receiverRegistered = true
   }
 

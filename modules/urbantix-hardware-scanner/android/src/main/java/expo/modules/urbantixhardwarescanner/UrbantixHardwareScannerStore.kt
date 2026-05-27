@@ -52,6 +52,20 @@ internal object UrbantixHardwareScannerStore {
       .apply()
   }
 
+  fun saveHardwareScannerConfirmed(context: Context, isConfirmed: Boolean = true) {
+    preferences(context)
+      .edit()
+      .putBoolean(UrbantixHardwareScannerConstants.HARDWARE_CONFIRMED_KEY, isConfirmed)
+      .apply()
+  }
+
+  fun isHardwareScannerConfirmed(context: Context): Boolean {
+    return preferences(context).getBoolean(
+      UrbantixHardwareScannerConstants.HARDWARE_CONFIRMED_KEY,
+      false
+    )
+  }
+
   fun savePendingScanResult(context: Context, result: HardwareScannerResultPayload) {
     val json = JSONObject()
     json.put("scannedCode", result.scannedCode)

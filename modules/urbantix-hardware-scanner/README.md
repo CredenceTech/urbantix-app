@@ -111,6 +111,26 @@ Main integration point:
 
 - [HardwareScannerBootstrap.tsx](/urbantix-app/src/components/HardwareScannerBootstrap.tsx)
 
+### Supported-device strategy
+
+The module now works across two Android categories:
+
+- rugged scanner devices with hardware scan buttons
+- normal Android phones without scanner hardware
+
+Current strategy:
+
+- the runtime foreground receiver is always registered
+- JS session and foreground listener setup still runs on Android
+- the background foreground-service path is only activated for confirmed/supported scanner devices
+
+A device becomes confirmed/supported when either:
+
+- it matches a known rugged-scanner vendor hint, or
+- the app receives a real hardware scan in foreground and stores that confirmation natively
+
+This lets normal phones avoid the hardware-service path while still allowing real scanner devices to unlock background and killed-state support after the first foreground hardware scan.
+
 ## 2. Native receives the broadcast
 
 The module uses three native receiver paths:
@@ -137,6 +157,7 @@ Purpose:
 - keeping scanner support alive when React UI is torn down
 
 The service is started from JS after a valid logged-in session is present.
+After the current compatibility changes, it is only started on confirmed/supported scanner devices.
 
 ### Manifest receiver
 
@@ -183,6 +204,7 @@ This is used for:
 
 - keeping the last valid scanner session
 - allowing pending scan results to be consumed later by JS
+- remembering whether this device has been confirmed as a real hardware-scanner device
 
 ## 5. JS consumes live or pending result
 
@@ -256,7 +278,21 @@ Fallback:
 
 - Android notification if overlay permission is not granted or overlay cannot be shown
 
+Overlay permission prompt behavior:
+
+- normal Android phones: no overlay prompt
+- confirmed scanner devices: prompt appears after support is confirmed, usually after the first foreground hardware scan
+
 ## Permissions
+
+### Foreground service permissions
+
+Declared in [android/src/main/AndroidManifest.xml](/urbantix-app/modules/urbantix-hardware-scanner/android/src/main/AndroidManifest.xml):
+
+- `FOREGROUND_SERVICE`
+- `FOREGROUND_SERVICE_DATA_SYNC`
+
+These are required for the scanner foreground service on newer Android versions / target SDK levels.
 
 Declared in:
 

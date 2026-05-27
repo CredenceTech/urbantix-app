@@ -17,6 +17,7 @@ type NativeUrbantixHardwareScannerModule = {
   stopScan(): void;
   startScannerService(): void;
   stopScannerService(): void;
+  isHardwareScannerSupported(): boolean;
   canDrawOverlays(): boolean;
   openOverlayPermissionSettings(): void;
   setAppInForeground(isForeground: boolean): void;
@@ -60,6 +61,9 @@ const UrbantixHardwareScanner = {
   },
   stopScannerService() {
     nativeModule?.stopScannerService();
+  },
+  isHardwareScannerSupported() {
+    return nativeModule?.isHardwareScannerSupported() ?? false;
   },
   canDrawOverlays() {
     return nativeModule?.canDrawOverlays() ?? false;
