@@ -17,7 +17,8 @@ interface EventComponentProps {
         start_date: string;
         total_sold: number;
         total_tickets: number;
-        minimum_price: number;
+        minimum_price?: number | null;
+        maximum_price?: number | null;
         isStudentPassEnable?: number;
     };
     actionOnRow: () => void;
@@ -27,6 +28,15 @@ const EventComponent: React.FC<EventComponentProps> = ({ objEvent, actionOnRow }
     const progress = objEvent.total_tickets > 0
         ? (objEvent.total_sold / objEvent.total_tickets)
         : 1;
+    const prices = [objEvent.minimum_price, objEvent.maximum_price]
+        .filter((price): price is number => price != null);
+    const uniquePrices = [...new Set(prices)];
+    const priceRange = uniquePrices.length > 1
+        ? `$${uniquePrices[0]} - $${uniquePrices[1]}`
+        : uniquePrices.length === 1
+            ? `$${uniquePrices[0]}`
+            : 'N/A';
+    const priceLabel = uniquePrices.length > 1 ? 'PRICE RANGE' : 'PRICE';
 
     return (
         <TouchableWithoutFeedback onPress={actionOnRow}>
@@ -43,16 +53,23 @@ const EventComponent: React.FC<EventComponentProps> = ({ objEvent, actionOnRow }
                 <Text style={styles.event_datetime}>
                     {moment(objEvent.start_date).format('dddd MMMM D, YYYY hh:mm a')}
                 </Text>
-                <View style={{ flexDirection: "row", marginTop: 10, marginBottom: 5 }}>
-                    <Text style={styles.event_datetime}>{objEvent.total_sold}/{objEvent.total_tickets}</Text>
-                    <View style={{ flex: 1 }} />
-                    <Text style={styles.event_datetime}>${objEvent.minimum_price}</Text>
+                <View style={styles.detailsRow}>
+                    <View>
+                        <Text style={styles.detailLabel}>TICKETS SOLD</Text>
+                        <Text style={styles.detailValue}>
+                            {objEvent.total_sold} / {objEvent.total_tickets}
+                        </Text>
+                    </View>
+                    <View style={styles.priceContainer}>
+                        <Text style={styles.detailLabel}>{priceLabel}</Text>
+                        <Text style={styles.priceValue}>{priceRange}</Text>
+                    </View>
                 </View>
                 <Progress.Bar
                     progress={progress}
                     color="#3e8b2b"
                     height={2}
-                    width={(Dimensions.get('window').width - 30)}
+                    width={(Dimensions.get('window').width - 56)}
                 />
             </View>
         </TouchableWithoutFeedback>
@@ -61,11 +78,14 @@ const EventComponent: React.FC<EventComponentProps> = ({ objEvent, actionOnRow }
 
 const styles = StyleSheet.create({
     main_view: {
-        paddingHorizontal: 15,
-        paddingTop: 20,
-        paddingBottom: 10,
+        marginHorizontal: 12,
+        marginTop: 10,
+        paddingHorizontal: 16,
+        paddingTop: 16,
+        paddingBottom: 14,
         flexDirection: "column",
         backgroundColor: black_color,
+        borderRadius: 12,
     },
     headerRow: {
         flexDirection: 'row',
@@ -75,9 +95,9 @@ const styles = StyleSheet.create({
     },
     event_title: {
         paddingVertical: 0,
-        fontSize: 24,
-        lineHeight: 28,
-        fontWeight: "bold",
+        fontSize: 18,
+        lineHeight: 22,
+        fontWeight: "600",
         color: white_color,
         flex: 1,
     },
@@ -94,15 +114,47 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     event_address: {
-        paddingVertical: 2,
-        fontSize: 14,
+        marginTop: 8,
+        fontSize: 13,
+        lineHeight: 18,
         fontWeight: "normal",
-        color: white_color,
+        color: '#D1D1D1',
     },
     event_datetime: {
-        fontSize: 14,
+        marginTop: 3,
+        fontSize: 13,
+        lineHeight: 18,
         fontWeight: "normal",
+        color: '#AFAFAF',
+    },
+    detailsRow: {
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        justifyContent: 'space-between',
+        marginTop: 16,
+        marginBottom: 8,
+    },
+    detailLabel: {
+        color: '#8E8E8E',
+        fontSize: 10,
+        lineHeight: 14,
+        fontWeight: '600',
+        letterSpacing: 0.6,
+    },
+    detailValue: {
         color: white_color,
+        fontSize: 14,
+        lineHeight: 20,
+        fontWeight: '600',
+    },
+    priceContainer: {
+        alignItems: 'flex-end',
+    },
+    priceValue: {
+        color: white_color,
+        fontSize: 15,
+        lineHeight: 20,
+        fontWeight: '700',
     },
 });
 

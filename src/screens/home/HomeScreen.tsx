@@ -38,7 +38,8 @@ interface EventItem {
     start_date: string;
     total_sold: number;
     total_tickets: number;
-    minimum_price: number;
+    minimum_price?: number | null;
+    maximum_price?: number | null;
 }
 
 interface FooterProps {
@@ -179,6 +180,12 @@ const HomeScreen: React.FC = () => {
 
         try {
             const result = await getEvent(params);
+
+            if (status === 'Upcoming') {
+                console.log('[Dashboard] Live events data:', result?.data);
+            } else if (status === 'Past') {
+                console.log('[Dashboard] Past events data:', result?.data);
+            }
 
             if (result?.success) {
                 // Extract pagination metadata from the response
