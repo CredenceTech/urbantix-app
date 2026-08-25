@@ -8,7 +8,8 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "prebuild": "npx expo prebuild --clean",
-    "android:release": "expo run:android --variant release"
+    "android:release": "expo run:android --variant release",
+    "prelease": "npx expo prebuild --clean && npx react-native build-android --mode=release"
   },
   "dependencies": {
     "@expo/metro-runtime": "~6.1.2",

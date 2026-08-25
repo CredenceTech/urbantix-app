@@ -5,6 +5,10 @@ import { navigationRef } from '../constants/root_navigation';
 import { baseURL } from '../constants/api_constants';
 import type { HardwareScannerResult } from '../../modules/urbantix-hardware-scanner';
 import ScanResultModal from './ScanResultModal';
+import SeasonTicketEventModal, {
+  needsSeasonTicketEvent,
+} from './SeasonTicketEventModal';
+import { eventCheckin } from '../constants/services';
 import {
   addHardwareScannerAppStateListener,
   addHardwareScannerListener,
@@ -19,7 +23,7 @@ import {
   stopHardwareScannerService,
 } from '../utils/hardwareScanner';
 
-const SCANNER_ROUTES = new Set(['CheckIn']);
+const SCANNER_ROUTES = new Set(['CheckIn', 'Check In']);
 const RESULT_MODAL_DURATION = 1800;
 const OVERLAY_PROMPT_MESSAGE =
   'Allow display over other apps so scan success and error messages can appear as a centered card when the app is in background or closed.';
@@ -28,6 +32,8 @@ const HardwareScannerBootstrap = () => {
   const authentication = useSelector((state: any) => state.authentication);
   const [modalResult, setModalResult] = useState<HardwareScannerResult | null>(null);
   const [showOverlayPermissionPrompt, setShowOverlayPermissionPrompt] = useState(false);
+  const [pendingSeasonBarcode, setPendingSeasonBarcode] = useState<string | null>(null);
+  const [submittingSeasonEvent, setSubmittingSeasonEvent] = useState(false);
 
   useEffect(() => {
     if (authentication?.user?.access_token) {
@@ -81,8 +87,14 @@ const HardwareScannerBootstrap = () => {
       } catch (error) {
       }
 
-      const currentRouteName = navigationRef.getCurrentRoute()?.name;
+      const currentRouteName = (navigationRef.getCurrentRoute() as any)?.name;
       if (currentRouteName && SCANNER_ROUTES.has(currentRouteName)) {
+        return;
+      }
+
+      if (!result.success && needsSeasonTicketEvent(result.message)) {
+        setModalResult(null);
+        setPendingSeasonBarcode(result.scannedCode);
         return;
       }
 
@@ -123,6 +135,23 @@ const HardwareScannerBootstrap = () => {
     return () => clearTimeout(timer);
   }, [modalResult?.processedAt]);
 
+  const submitSeasonTicketEvent = async (event: { id: number | string }) => {
+    if (!pendingSeasonBarcode) return;
+    setSubmittingSeasonEvent(true);
+    const barcode = pendingSeasonBarcode;
+    const result = await eventCheckin({barcode, event_id: event.id});
+    setSubmittingSeasonEvent(false);
+    setPendingSeasonBarcode(null);
+    setModalResult({
+      scannedCode: barcode,
+      success: !!result?.success,
+      message: result?.message || 'Ticket check-in failed.',
+      mode: 'ticket',
+      source: 'hardware',
+      processedAt: Date.now(),
+    });
+  };
+
   return (
     <>
       <ScanResultModal
@@ -152,6 +181,13 @@ const HardwareScannerBootstrap = () => {
         success={!!modalResult?.success}
         title={modalResult?.success ? 'Scan Successful' : 'Scan Status'}
         message={modalResult?.message || ''}
+      />
+      <SeasonTicketEventModal
+        visible={!!pendingSeasonBarcode}
+        userId={authentication?.user?.id}
+        submitting={submittingSeasonEvent}
+        onCancel={() => setPendingSeasonBarcode(null)}
+        onSubmit={submitSeasonTicketEvent}
       />
     </>
   );

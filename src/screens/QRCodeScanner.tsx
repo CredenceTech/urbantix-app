@@ -7,6 +7,9 @@ import {useRoute} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import {baseURL} from '../constants/api_constants';
 import type {HardwareScannerResult} from '../../modules/urbantix-hardware-scanner';
+import SeasonTicketEventModal, {
+  needsSeasonTicketEvent,
+} from '../components/SeasonTicketEventModal';
 import {
   addHardwareScannerAppStateListener,
   addHardwareScannerListener,
@@ -20,12 +23,14 @@ const QRScanner = () => {
   const objEvent = route.params?.objEvent;
   const hardwareResult = route.params?.hardwareResult;
   const authentication = useSelector((state: any) => state.authentication);
-  const [scannedData, setScanneddata] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
-  const [failedMessage, setFailedData] = useState(null);
+  const [scannedData, setScanneddata] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [failedMessage, setFailedData] = useState<string | null>(null);
   const [resetSuccess, setResetSuccess] = useState(false);
   const [alreadyScanned, setAlreadyScanned] = useState(false);
   const [verifiedSuccessfully, setVerifiedSuccessfully] = useState(false);
+  const [pendingSeasonBarcode, setPendingSeasonBarcode] = useState<string | null>(null);
+  const [submittingSeasonEvent, setSubmittingSeasonEvent] = useState(false);
 
   useEffect(() => {
     let timer: string | number | NodeJS.Timeout;
@@ -48,6 +53,12 @@ const QRScanner = () => {
       setAlreadyScanned(false);
       setFailedData(null);
     } else {
+      if (needsSeasonTicketEvent(result.message)) {
+        setPendingSeasonBarcode(result.scannedCode);
+        setAlreadyScanned(false);
+        setFailedData(null);
+        return;
+      }
       setFailedData(result.message);
       setAlreadyScanned(true);
       setResetSuccess(true);
@@ -82,9 +93,10 @@ const QRScanner = () => {
     };
   }, [authentication?.user?.access_token]);
 
-  const barCodeCheckIn = async (barcode: string) => {
+  const barCodeCheckIn = async (barcode: string, eventId?: number | string) => {
     const params = {
       barcode,
+      ...(eventId ? {event_id: eventId} : {}),
     };
     const result = await eventCheckin(params);
 
@@ -92,13 +104,41 @@ const QRScanner = () => {
       setSuccessMessage(result.message);
       setVerifiedSuccessfully(true);
     } else {
+      if (needsSeasonTicketEvent(result?.message)) {
+        setPendingSeasonBarcode(barcode);
+        setAlreadyScanned(false);
+        setFailedData(null);
+        return;
+      }
       setFailedData(result?.message || 'Ticket check-in failed.');
       setAlreadyScanned(true);
       setResetSuccess(true);
     }
   };
 
-  return verifiedSuccessfully ? (
+  const submitSeasonTicketEvent = async (event: {id: number | string}) => {
+    if (!pendingSeasonBarcode) return;
+    setSubmittingSeasonEvent(true);
+    const barcode = pendingSeasonBarcode;
+    const result = await eventCheckin({barcode, event_id: event.id});
+    setSubmittingSeasonEvent(false);
+    setPendingSeasonBarcode(null);
+
+    if (result?.success) {
+      setSuccessMessage(result.message);
+      setVerifiedSuccessfully(true);
+      setAlreadyScanned(false);
+      setFailedData(null);
+    } else {
+      setFailedData(result?.message || 'Ticket check-in failed.');
+      setAlreadyScanned(true);
+      setResetSuccess(true);
+    }
+  };
+
+  return (
+    <>
+      {verifiedSuccessfully ? (
     <SafeAreaView
       style={{
         flex: 1,
@@ -132,7 +172,7 @@ const QRScanner = () => {
         const barcode = data?.data;
         setScanneddata(barcode);
         if (barcode) {
-          barCodeCheckIn(barcode);
+          barCodeCheckIn(barcode, objEvent?.id);
         }
       }}
       flashMode={'off'}
@@ -192,6 +232,15 @@ const QRScanner = () => {
         minHeight: 96,
       }}
     />
+      )}
+      <SeasonTicketEventModal
+        visible={!!pendingSeasonBarcode}
+        userId={authentication?.user?.id}
+        submitting={submittingSeasonEvent}
+        onCancel={() => setPendingSeasonBarcode(null)}
+        onSubmit={submitSeasonTicketEvent}
+      />
+    </>
   );
 };
 

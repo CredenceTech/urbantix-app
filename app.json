@@ -16,7 +16,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.urbantixs",
-      "version": "1.11",
+      "version": "1.12",
       "buildNumber": "1",
       "googleServicesFile": "./GoogleService-Info.plist",
       "appleTeamId": "TV7TL5MRV9",
@@ -31,8 +31,8 @@
       }
     },
     "android": {
-      "versionCode": 26,
-      "version": "25.1",
+      "versionCode": 27,
+      "version": "25.2",
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#ffffff"
